@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { Star, Heart, ShoppingCart, Filter } from 'lucide-react';
+import { Star, Heart, ShoppingCart, Filter, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import Autoplay from 'embla-carousel-autoplay';
+import SavingsBadge from '@/components/SavingsBadge';
+import SavingsCalculator from '@/components/SavingsCalculator';
+import { useSavings } from '@/context/SavingsContext';
 import iphone12Img from '@/assets/image/smartphones/apple_iphone-12.jpg';
 import galaxyImg from '@/assets/image/smartphones/samsung-galaxy.jpg';
 import pixel10Img from '@/assets/image/smartphones/google-pixel-10.jpg';
@@ -368,6 +372,7 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
   const [selectedSub, setSelectedSub] = useState("Tous");
   const [favorites, setFavorites] = useState<number[]>([]);
   const { addItem } = useCart();
+  const { getSavingsForProduct, savingsPlans, calculateSavings } = useSavings();
 
   const toggleFavorite = (productId: number) => {
     setFavorites(prev =>
@@ -534,6 +539,13 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
                         }}
                       />
                       <div className="absolute top-4 left-4 flex flex-col gap-2">
+                        {(() => {
+                          const savings = getSavingsForProduct(product.id);
+                          const plan = savings ? savingsPlans.find(p => p.id === savings.savingsPlanId) : null;
+                          return plan ? (
+                            <SavingsBadge durationWeeks={plan.durationWeeks} interestRate={plan.interestRate} variant="compact" />
+                          ) : null;
+                        })()}
                         {product.isNew && (
                           <span className="bg-success text-success-foreground px-2 py-1 rounded-full text-xs font-semibold">Nouveau</span>
                         )}
@@ -560,14 +572,47 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
                           <span className="text-lg text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
                         )}
                       </div>
-                      <Button
-                        className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
-                        disabled={!product.inStock}
-                        onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
-                      >
-                        <ShoppingCart className="h-4 w-4 mr-2" />
-                        {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
-                      </Button>
+                      {(() => {
+                        const savings = getSavingsForProduct(product.id);
+                        const plan = savings ? savingsPlans.find(p => p.id === savings.savingsPlanId) : null;
+                        const calculation = plan ? calculateSavings(product.price, plan.id) : null;
+
+                        return plan && calculation ? (
+                          <div className="space-y-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" className="w-full gap-2 border-green-500 text-green-700 hover:bg-green-50">
+                                  <Wallet className="h-4 w-4" />
+                                  Voir le plan d'épargne
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-md">
+                                <DialogHeader>
+                                  <DialogTitle>Plan d'Épargne</DialogTitle>
+                                </DialogHeader>
+                                <SavingsCalculator calculation={calculation} productName={product.name} />
+                              </DialogContent>
+                            </Dialog>
+                            <Button
+                              className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
+                              disabled={!product.inStock}
+                              onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                            >
+                              <ShoppingCart className="h-4 w-4 mr-2" />
+                              {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
+                            disabled={!product.inStock}
+                            onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                          >
+                            <ShoppingCart className="h-4 w-4 mr-2" />
+                            {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
+                          </Button>
+                        );
+                      })()}
                     </CardContent>
                   </Card>
                 </CarouselItem>
@@ -605,6 +650,13 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
 
                   {/* Badges */}
                   <div className="absolute top-4 left-4 flex flex-col gap-2">
+                    {(() => {
+                      const savings = getSavingsForProduct(product.id);
+                      const plan = savings ? savingsPlans.find(p => p.id === savings.savingsPlanId) : null;
+                      return plan ? (
+                        <SavingsBadge durationWeeks={plan.durationWeeks} interestRate={plan.interestRate} variant="compact" />
+                      ) : null;
+                    })()}
                     {product.isNew && (
                       <span className="bg-success text-success-foreground px-2 py-1 rounded-full text-xs font-semibold">
                         Nouveau
@@ -680,14 +732,47 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
                   </div>
 
                   {/* Add to Cart Button */}
-                  <Button
-                    className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
-                    disabled={!product.inStock}
-                    onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
-                  </Button>
+                  {(() => {
+                    const savings = getSavingsForProduct(product.id);
+                    const plan = savings ? savingsPlans.find(p => p.id === savings.savingsPlanId) : null;
+                    const calculation = plan ? calculateSavings(product.price, plan.id) : null;
+
+                    return plan && calculation ? (
+                      <div className="space-y-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" className="w-full gap-2 border-green-500 text-green-700 hover:bg-green-50">
+                              <Wallet className="h-4 w-4" />
+                              Voir le plan d'épargne
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-md">
+                            <DialogHeader>
+                              <DialogTitle>Plan d'Épargne</DialogTitle>
+                            </DialogHeader>
+                            <SavingsCalculator calculation={calculation} productName={product.name} />
+                          </DialogContent>
+                        </Dialog>
+                        <Button
+                          className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
+                          disabled={!product.inStock}
+                          onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                        >
+                          <ShoppingCart className="h-4 w-4 mr-2" />
+                          {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
+                        disabled={!product.inStock}
+                        onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        {product.inStock ? 'Ajouter au panier' : 'Indisponible'}
+                      </Button>
+                    );
+                  })()}
                 </CardContent>
               </Card>
             </motion.div>

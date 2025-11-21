@@ -7,7 +7,8 @@ import { usePreferences } from '@/context/PreferencesContext';
 
 const Index = () => {
   const { hasVisited, setSelectedCategories, setInterests, markAsVisited } = usePreferences();
-  const [showCategoryModal, setShowCategoryModal] = useState(!hasVisited);
+  // Disable modals by setting to false
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   const handleCategorySelection = (categories: string[]) => {
