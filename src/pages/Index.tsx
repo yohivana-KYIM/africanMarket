@@ -3,6 +3,7 @@ import Hero from '@/components/Hero';
 import ProductGrid from '@/components/ProductGrid';
 import CategorySelectionModal from '@/components/CategorySelectionModal';
 import WelcomeModal from '@/components/WelcomeModal';
+import HomeCreations from '@/components/HomeCreations';
 import { usePreferences } from '@/context/PreferencesContext';
 
 const Index = () => {
@@ -35,6 +36,7 @@ const Index = () => {
         onClose={handleWelcomeComplete}
       />
       <Hero />
+      <HomeCreations />
       <ProductGrid title="Sélection du moment" limit={6} />
     </>
   );

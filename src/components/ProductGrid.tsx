@@ -91,7 +91,7 @@ const mockProducts = [
     reviews: 30,
     image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
     category: "Sacs",
-    subcategory: "Voyage",
+    subcategory: "Sacs de voyage",
     inStock: true,
     isNew: true
   },
@@ -501,9 +501,10 @@ type ProductGridProps = {
   title?: string;
   renderCarousel?: boolean;
   limit?: number;
+  className?: string;
 };
 
-const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hideFilters = false, title, renderCarousel = false, limit }: ProductGridProps) => {
+const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hideFilters = false, title, renderCarousel = false, limit, className }: ProductGridProps) => {
   const [selectedCategory, setSelectedCategory] = useState("Tous");
   const [priceRange, setPriceRange] = useState({ min: 0, max: 500000 });
   const [sortBy, setSortBy] = useState("featured");
@@ -559,7 +560,7 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
   };
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className={className ?? "container mx-auto px-4 py-12"}>
       {/* Section Header */}
       {!hideHeader && (
         <div className="text-center mb-12">
@@ -716,6 +717,15 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
                         {product.originalPrice > product.price && (
                           <span className="text-lg text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
                         )}
+                      </div>
+                      <div className="flex items-center gap-1 mb-4">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-4 h-4 ${i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+                          />
+                        ))}
+                        <span className="text-xs text-muted-foreground">({product.reviews})</span>
                       </div>
                       {(() => {
                         const savings = getSavingsForProduct(product.id);
