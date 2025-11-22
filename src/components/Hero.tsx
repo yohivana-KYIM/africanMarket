@@ -5,23 +5,23 @@ import { motion } from 'framer-motion';
 const slides = [
   {
     id: 1,
-    title: "Électronique Haut de Gamme",
-    subtitle: "Smartphones, casques, accessoires — jusqu'à -50%",
-    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=1400',
-    cta: 'Découvrir'
+    title: "Sacs à Main Artisanaux",
+    subtitle: "L'élégance du fait-main, l'authenticité du cuir",
+    image: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=1400',
+    cta: 'Découvrir la Collection'
   },
   {
     id: 2,
-    title: "Mode & Wax Authentique",
-    subtitle: "Styles africains, qualité premium",
-    image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=1400',
+    title: "Chaussures & Sandales",
+    subtitle: "Confort et style, inspirés par la tradition",
+    image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1400',
     cta: 'Shopper maintenant'
   },
   {
     id: 3,
-    title: "Beauté & Parfums",
-    subtitle: "Les meilleurs soins et fragrances",
-    image: 'https://images.unsplash.com/photo-1541643600914-78b084683601?w=1400',
+    title: "Accessoires Uniques",
+    subtitle: "La touche finale pour votre style",
+    image: 'https://images.unsplash.com/photo-1576053139778-7e32f2ae3cfd?w=1400',
     cta: 'Voir les offres'
   }
 ];
@@ -41,9 +41,9 @@ const Hero = () => {
               transition={{ duration: 0.6 }}
               className="text-5xl lg:text-6xl font-bold mb-6 leading-tight"
             >
-              AFRICA
+              L'EXCELLENCE
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-300">
-                MARKET
+                AFRICAINE
               </span>
             </motion.h1>
 
@@ -53,8 +53,8 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg lg:text-xl mb-8 text-primary-foreground/90 leading-relaxed"
             >
-              Découvrez les meilleurs produits d'Afrique.
-              <span className="block font-semibold">Qualité premium, prix imbattables ! 🛒️</span>
+              Connecter le monde au savoir-faire authentique de nos artisans.
+              <span className="block font-semibold">Sacs à main, chaussures et plus encore ! ✨</span>
             </motion.p>
 
             <motion.div
@@ -63,8 +63,8 @@ const Hero = () => {
               transition={{ duration: 0.6, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4 mb-8"
             >
-              <button className="btn-hero animate-glow">Explorer les Produits</button>
-              <button className="btn-secondary-hero">Offres Spéciales</button>
+              <button className="btn-hero animate-glow">Explorer la Boutique</button>
+              <button className="btn-secondary-hero">Nouveautés</button>
             </motion.div>
 
             <motion.div
@@ -75,15 +75,15 @@ const Hero = () => {
             >
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 bg-success rounded-full animate-pulse"></div>
-                <span>Livraison rapide</span>
+                <span>Artisanat Authentique</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 bg-success rounded-full animate-pulse"></div>
-                <span>Paiement sécurisé</span>
+                <span>Qualité Premium</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="h-2 w-2 bg-success rounded-full animate-pulse"></div>
-                <span>Support 24/7</span>
+                <span>Livraison Internationale</span>
               </div>
             </motion.div>
           </div>
@@ -115,7 +115,7 @@ const Hero = () => {
 
                         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
                           <div className="max-w-xl">
-                            <div className="text-sm uppercase tracking-wider text-primary-foreground/80 mb-1">Sélection du jour</div>
+                            <div className="text-sm uppercase tracking-wider text-primary-foreground/80 mb-1">Coup de cœur</div>
                             <h3 className="text-2xl md:text-3xl font-bold mb-2">{slide.title}</h3>
                             <p className="text-primary-foreground/90 mb-4">{slide.subtitle}</p>
                             <button className="btn-secondary-hero">{slide.cta}</button>

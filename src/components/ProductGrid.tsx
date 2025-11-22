@@ -31,6 +31,136 @@ import tablet3 from '@/assets/image/tablette/table3.jpg';
 // Mock data for products
 const mockProducts = [
   {
+    id: 101,
+    name: "Sac à Main en Cuir Tressé",
+    price: 45000,
+    originalPrice: 60000,
+    rating: 4.8,
+    reviews: 12,
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800",
+    category: "Sacs",
+    subcategory: "Sacs à main",
+    inStock: true,
+    isNew: true
+  },
+  {
+    id: 102,
+    name: "Sandales Artisanales Perlées",
+    price: 25000,
+    originalPrice: 30000,
+    rating: 4.7,
+    reviews: 24,
+    image: "https://images.unsplash.com/photo-1603487742131-4160d6e66bb6?w=800",
+    category: "Chaussures",
+    subcategory: "Sandales",
+    inStock: true,
+    isNew: true
+  },
+  {
+    id: 103,
+    name: "Pochette Wax Colorée",
+    price: 15000,
+    originalPrice: 20000,
+    rating: 4.5,
+    reviews: 8,
+    image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800",
+    category: "Sacs",
+    subcategory: "Pochettes",
+    inStock: true,
+    isNew: false
+  },
+  {
+    id: 104,
+    name: "Mocassins en Daim",
+    price: 35000,
+    originalPrice: 45000,
+    rating: 4.6,
+    reviews: 15,
+    image: "https://images.unsplash.com/photo-1533867617858-e7b97e0605df?w=800",
+    category: "Chaussures",
+    subcategory: "Mocassins",
+    inStock: true,
+    isNew: false
+  },
+  {
+    id: 105,
+    name: "Sac de Voyage en Toile",
+    price: 55000,
+    originalPrice: 70000,
+    rating: 4.9,
+    reviews: 30,
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+    category: "Sacs",
+    subcategory: "Voyage",
+    inStock: true,
+    isNew: true
+  },
+  {
+    id: 106,
+    name: "Babouches Traditionnelles",
+    price: 20000,
+    originalPrice: 25000,
+    rating: 4.4,
+    reviews: 18,
+    image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=800",
+    category: "Chaussures",
+    subcategory: "Traditionnel",
+    inStock: true,
+    isNew: false
+  },
+  {
+    id: 107,
+    name: "Sac à Dos Scolaire Robuste",
+    price: 18000,
+    originalPrice: 22000,
+    rating: 4.5,
+    reviews: 45,
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800",
+    category: "Sacs",
+    subcategory: "Sacs de classe",
+    inStock: true,
+    isNew: true
+  },
+  {
+    id: 108,
+    name: "Cartable Vintage Cuir",
+    price: 35000,
+    originalPrice: 45000,
+    rating: 4.8,
+    reviews: 22,
+    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800",
+    category: "Sacs",
+    subcategory: "Sacs de classe",
+    inStock: true,
+    isNew: false
+  },
+  {
+    id: 109,
+    name: "Parure Bijoux Or",
+    price: 15000,
+    originalPrice: 20000,
+    rating: 4.6,
+    reviews: 18,
+    image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800",
+    category: "Accessoires",
+    subcategory: "Bijoux",
+    inStock: true,
+    isNew: true
+  },
+  {
+    id: 110,
+    name: "Montre Classique Homme",
+    price: 25000,
+    originalPrice: 35000,
+    rating: 4.7,
+    reviews: 34,
+    image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=800",
+    category: "Accessoires",
+    subcategory: "Montres",
+    inStock: true,
+    isNew: false
+  },
+  {
     id: 1,
     name: "Smartphone Samsung Galaxy A54",
     price: 180000,
@@ -342,7 +472,7 @@ const mockProducts = [
   }
 ];
 
-const categories = ["Tous", "Électronique", "Mode", "Beauté", "Sport", "Maison", "Livres"];
+const categories = ["Tous", "Sacs", "Chaussures", "Accessoires", "Électronique", "Mode", "Beauté", "Sport", "Maison", "Livres"];
 const electronicSubcategories = [
   "Tous",
   "Smartphones",
@@ -351,6 +481,14 @@ const electronicSubcategories = [
   "Ordinateurs",
   "Tablettes",
   "Accessoires",
+];
+
+const bagSubcategories = [
+  "Tous",
+  "Sacs à main",
+  "Sacs de classe",
+  "Sacs de voyage",
+  "Pochettes",
 ];
 
 import { useCart } from '@/context/CartContext';
@@ -403,6 +541,9 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
     Ordinateurs: 'https://picsum.photos/seed/fallback-laptop/1200/800',
     Tablettes: 'https://picsum.photos/seed/fallback-tablet/1000/700',
     Accessoires: 'https://picsum.photos/seed/fallback-accessory/800/600',
+    "Sacs à main": 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800',
+    "Sacs de classe": 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800',
+    "Sacs de voyage": 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800',
   };
 
   const getFallback = (subcategory?: string) => {
@@ -459,8 +600,8 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
               </Select>
             </div>
 
-            {/* Subcategory Filter for electronics */}
-            {forceCategory === 'Électronique' && (
+            {/* Subcategory Filter */}
+            {(effectiveCategory === 'Électronique' || effectiveCategory === 'Sacs' || effectiveCategory === 'Accessoires') && (
               <div>
                 <label className="block text-sm font-medium mb-2">Sous-catégorie</label>
                 <Select value={effectiveSub} onValueChange={setSelectedSub} disabled={!!forceSubcategory}>
@@ -468,10 +609,14 @@ const ProductGrid = ({ forceCategory, forceSubcategory, hideHeader = false, hide
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {electronicSubcategories.map(sub => (
-                      <SelectItem key={sub} value={sub}>
-                        {sub}
-                      </SelectItem>
+                    {effectiveCategory === 'Électronique' && electronicSubcategories.map(sub => (
+                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                    ))}
+                    {effectiveCategory === 'Sacs' && bagSubcategories.map(sub => (
+                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
+                    ))}
+                    {effectiveCategory === 'Accessoires' && ["Tous", "Bijoux", "Montres", "Lunettes"].map(sub => (
+                      <SelectItem key={sub} value={sub}>{sub}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

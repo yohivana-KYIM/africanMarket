@@ -46,7 +46,7 @@ const WelcomeModal = ({ open, onClose }: WelcomeModalProps) => {
                         className="text-center mb-8"
                     >
                         <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            AFRICA <span className="text-primary">MARKET</span>
+                            L'EXCELLENCE <span className="text-primary">AFRICAINE</span>
                         </h1>
                         <div className="h-1 w-24 bg-primary mx-auto mb-6"></div>
                     </motion.div>
@@ -62,7 +62,7 @@ const WelcomeModal = ({ open, onClose }: WelcomeModalProps) => {
                             <span className="font-semibold">Merci pour votre message.</span> Nous ne sommes pas disponibles pour l'instant, mais nous vous répondrons au plus vite.
                         </p>
                         <p className="text-lg leading-relaxed">
-                            <span className="font-semibold">Thank you for contacting Africa Market Bags!</span> Tell us how we can help you.
+                            <span className="font-semibold">Thank you for contacting L'Excellence Africaine!</span> Tell us how we can help you.
                         </p>
                         <div className="pt-4 border-t border-border">
                             <p className="font-medium mb-3">
