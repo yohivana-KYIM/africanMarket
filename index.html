@@ -1,26 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AFRICA MARKET 🛍️💰 - Votre Marketplace Africain de Confiance</title>
-    <meta name="description" content="Découvrez les meilleurs produits d'Afrique sur AFRICA MARKET. Électronique, mode, beauté, sport - Qualité premium, prix imbattables en FCFA. Livraison rapide partout en Afrique." />
-    <meta name="author" content="AFRICA MARKET" />
-    <meta name="keywords" content="marketplace africain, e-commerce afrique, produits africains, FCFA, livraison cameroun" />
+    <title>Africa Market - Sacs & Accessoires Africains de Luxe</title>
+    <meta name="description" content="Sacs à main wax, bandoulières bogolan, chaussures cuir chèvre, parfums africains. Livraison partout au Cameroun. FCFA uniquement." />
+    <meta name="keywords" content="sacs africains, wax, bogolan, kente, cuir chèvre, accessoires luxe, Cameroun, FCFA" />
+    <meta name="author" content="Africa Market" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://africamarketbag.store" />
 
-    <meta property="og:title" content="AFRICA MARKET 🛍️💰 - Votre Marketplace Africain de Confiance" />
-    <meta property="og:description" content="Découvrez les meilleurs produits d'Afrique. Qualité premium, prix imbattables en FCFA. Livraison rapide !" />
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="" />
+    <meta property="og:title" content="Africa Market - Sacs & Accessoires Africains de Luxe" />
+    <meta property="og:description" content="Sacs à main wax, bandoulières bogolan, chaussures cuir chèvre, parfums africains. Livraison partout au Cameroun." />
+    <meta property="og:url" content="https://africamarketbag.store" />
+    <meta property="og:site_name" content="Africa Market" />
+    <meta property="og:locale" content="fr_CM" />
 
+    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="" />
-    <meta name="twitter:image" content="" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-  </head>
+    <meta name="twitter:title" content="Africa Market - Sacs & Accessoires Africains de Luxe" />
+    <meta name="twitter:description" content="Sacs à main wax, bandoulières bogolan, chaussures cuir chèvre, parfums africains." />
 
-  <body>
+    <!-- Hreflang -->
+    <link rel="alternate" hreflang="fr-CM" href="https://africamarketbag.store" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Lora:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#3c2f2f" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+  </head>
+  <body class="bg-white">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
   </body>
 </html>

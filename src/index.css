@@ -1,231 +1,184 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-/* AFRICA MARKET Design System - Inspired by African warmth and modern e-commerce */
+/* ═══════════════════════════════════════════
+   AFRICA MARKET BAG — Louis Vuitton Design System
+   ═══════════════════════════════════════════ */
 
-@layer base {
-  :root {
-    --background: 0 0% 98%;
-    --foreground: 25 30% 15%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 25 30% 15%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 25 30% 15%;
-
-    /* Black - Primary brand color */
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 100%;
-    --primary-light: 0 0% 30%;
-    --primary-dark: 0 0% 0%;
-
-    /* Gray secondary colors */
-    --secondary: 0 0% 95%;
-    --secondary-foreground: 0 0% 10%;
-
-    --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 45%;
-
-    --accent: 0 0% 10%;
-    --accent-foreground: 0 0% 100%;
-
-    /* Dark gray for success states */
-    --success: 0 0% 20%;
-    --success-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
-    --ring: 0 0% 10%;
-
-    --radius: 0.5rem;
-
-    /* Gradients for monochrome theme */
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 25%));
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%), hsl(0 0% 97%));
-    --gradient-accent: linear-gradient(90deg, hsl(0 0% 10%), hsl(0 0% 20%));
-
-    /* Shadows with neutral tones */
-    --shadow-warm: 0 10px 30px -10px hsl(0 0% 0% / 0.2);
-    --shadow-card: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
-    --shadow-glow: 0 0 40px hsl(0 0% 50% / 0.3);
-
-    /* Animation timing */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
+:root {
+  --lv-white: #ffffff;
+  --lv-offwhite: #f6f5f3;
+  --lv-cream: #faf9f7;
+  --lv-black: #19110b;
+  --lv-dark: #1a1a1a;
+  --lv-brown: #6b4c3b;
+  --lv-gold: #c5a467;
+  --lv-gold-light: #d4af37;
+  --lv-grey: #757575;
+  --lv-grey-light: #e8e8e8;
+  --lv-border: #e0ded9;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-  }
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
 }
 
-@layer utilities {
-  .shadow-warm {
-    box-shadow: var(--shadow-warm);
-  }
-
-  .shadow-card {
-    box-shadow: var(--shadow-card);
-  }
-
-  .shadow-glow {
-    box-shadow: var(--shadow-glow);
-  }
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer components {
-
-  /* Hero button variants */
-  .btn-hero {
-    @apply bg-gradient-to-r from-primary to-primary-dark text-primary-foreground;
-    @apply px-8 py-4 rounded-lg font-semibold text-lg;
-    @apply shadow-warm hover:shadow-glow transition-all duration-300;
-    @apply hover:scale-105 active:scale-95;
-  }
-
-  .btn-secondary-hero {
-    @apply border-2 border-primary text-primary bg-transparent;
-    @apply px-8 py-4 rounded-lg font-semibold text-lg;
-    @apply hover:bg-primary hover:text-primary-foreground;
-    @apply transition-all duration-300 hover:scale-105;
-  }
-
-  /* Card styles */
-  .product-card {
-    @apply bg-card border border-border rounded-xl overflow-hidden;
-    @apply shadow-card hover:shadow-warm transition-all duration-300;
-    @apply hover:-translate-y-1 cursor-pointer;
-  }
-
-  /* Animations */
-  .fade-in-up {
-    animation: fadeInUp 0.6s ease-out forwards;
-  }
-
-  .slide-in-right {
-    animation: slideInRight 0.5s ease-out forwards;
-  }
-
-  .scale-hover {
-    @apply transition-transform duration-200 hover:scale-105;
-  }
+body {
+  font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--lv-black);
+  background: var(--lv-white);
+  line-height: 1.6;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--lv-grey);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--lv-brown);
+}
+
+::selection {
+  background: var(--lv-black);
+  color: var(--lv-white);
+}
+
+/* LV-style button base */
+.lv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border: 1px solid var(--lv-black);
+  background: transparent;
+  color: var(--lv-black);
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  text-decoration: none;
+}
+
+.lv-btn:hover {
+  background: var(--lv-black);
+  color: var(--lv-white);
+}
+
+.lv-btn-filled {
+  background: var(--lv-black);
+  color: var(--lv-white);
+  border-color: var(--lv-black);
+}
+
+.lv-btn-filled:hover {
+  background: var(--lv-brown);
+  border-color: var(--lv-brown);
+}
+
+.lv-btn-white {
+  border-color: var(--lv-white);
+  color: var(--lv-white);
+}
+
+.lv-btn-white:hover {
+  background: var(--lv-white);
+  color: var(--lv-black);
+}
+
+/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
-@keyframes slideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-@keyframes glow {
-
-  0%,
-  100% {
-    box-shadow: 0 0 20px hsl(0 0% 50% / 0.3);
-  }
-
-  50% {
-    box-shadow: 0 0 30px hsl(0 0% 50% / 0.5);
-  }
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
-.animate-glow {
-  animation: glow 2s ease-in-out infinite;
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(197, 164, 103, 0.3); }
+  50% { box-shadow: 0 0 0 8px rgba(197, 164, 103, 0); }
 }
 
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
+/* Premium button hover with gold underline reveal */
+.lv-btn {
+  position: relative;
+  overflow: hidden;
+}
+.lv-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--lv-gold);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform: translateX(-50%);
+}
+.lv-btn:hover::after {
+  width: 60%;
 }
 
-.animate-spin-slow {
-  animation: spin-slow 20s linear infinite;
+/* Hide scrollbar for nav */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Image loading shimmer */
+img[loading="lazy"] {
+  background: linear-gradient(90deg, #f6f5f3 25%, #eeeceb 50%, #f6f5f3 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease infinite;
+}
+
+/* Focus-visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--lv-gold);
+  outline-offset: 2px;
 }

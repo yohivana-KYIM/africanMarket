@@ -1,245 +1,628 @@
-import { useState } from 'react';
-import { Search, ShoppingCart, Menu, X, User, MapPin, Globe, Zap, Info, Wrench } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Link } from 'react-router-dom';
-import { useCart } from '@/context/CartContext';
-import CartSheet from '@/components/CartSheet';
+import { useState, useEffect, type FC } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate, useLocation } from "react-router-dom";
+import {
+  HiOutlineSearch,
+  HiOutlineUser,
+  HiOutlineShoppingBag,
+  HiOutlineMenu,
+  HiOutlineX,
+  HiOutlineHeart,
+  HiOutlineChevronRight,
+  HiOutlineArrowLeft,
+} from "react-icons/hi";
+import ContactPanel from "./ContactPanel";
+import { categoriesConfig } from "../data/categories";
+import type { CategoryConfig } from "../types";
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const { totalQuantity } = useCart();
+interface HeaderProps {
+  cartCount: number;
+  toggleCart: () => void;
+}
 
-  const categories = [
-    'Électronique'
-  ];
+const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [mobileSubMenu, setMobileSubMenu] = useState<CategoryConfig | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = isMobileMenuOpen || searchOpen ? "hidden" : "";
+  }, [isMobileMenuOpen, searchOpen]);
+
+  const goHome = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  const goToCategory = (slug: string) => {
+    setIsMobileMenuOpen(false);
+    setActiveMenu(null);
+    setMobileSubMenu(null);
+    navigate(`/categorie/${slug}`);
+  };
+
+  const goToSubcategory = (catSlug: string, subSlug: string) => {
+    setIsMobileMenuOpen(false);
+    setActiveMenu(null);
+    setMobileSubMenu(null);
+    navigate(`/categorie/${catSlug}/${subSlug}`);
+  };
+
+  const activeCat = categoriesConfig.find((c) => c.slug === activeMenu);
+
+  // Detect if on homepage (transparent header) vs inner pages (solid)
+  const isHomePage = location.pathname === "/";
+  const headerSolid = isScrolled || !isHomePage;
 
   return (
-    <header className="sticky top-0 z-50 bg-card border-b shadow-card">
-      {/* Top bar */}
-      <div className="bg-primary text-primary-foreground py-2">
-        <div className="container mx-auto px-4 flex justify-between items-center text-sm">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4" />
-            <span>Livraison gratuite à partir de 50,000 FCFA</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <span>Contact: +237 6 51 71 15 45</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Main header */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-primary">
-              AFRICA MARKET
-            </div>
-            <div className="text-primary text-xl">🛍️💰</div>
-          </Link>
-
-          {/* Search bar - Desktop */}
-          <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-            <div className="relative w-full">
-              <Input
-                type="text"
-                placeholder="Rechercher des produits..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pr-12 h-12 rounded-l-lg border-r-0"
-              />
-              <Button className="absolute right-0 top-0 h-12 px-6 rounded-l-none bg-primary hover:bg-primary-dark">
-                <Search className="h-5 w-5" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Right side icons */}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="hidden md:flex items-center gap-2">
-              <User className="h-5 w-5" />
-              <span>Compte</span>
-            </Button>
-
-            <CartSheet>
-              <Button variant="ghost" size="sm" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                {totalQuantity > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 min-w-5 px-1 flex items-center justify-center">
-                    {totalQuantity}
-                  </span>
-                )}
-              </Button>
-            </CartSheet>
-
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+    <>
+      {/* ═══════════════ HEADER ═══════════════ */}
+      <header
+        className="fixed top-0 left-0 w-full z-50"
+        onMouseLeave={() => setActiveMenu(null)}
+      >
+        {/* ── TOP PROMO BANNER ── */}
+        <motion.div
+          initial={false}
+          animate={{ height: isScrolled ? 0 : 32, opacity: isScrolled ? 0 : 1 }}
+          transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+          className="bg-[#19110b] overflow-hidden"
+        >
+          <div className="h-8 flex items-center justify-center px-4">
+            <motion.p
+              initial={{ y: -10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.6 }}
+              className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-white/90 font-light truncate"
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+              Livraison offerte dès 50 000 FCFA &mdash; Retour sous 14 jours
+            </motion.p>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Search bar - Mobile */}
-        <div className="md:hidden mt-4">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Rechercher..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pr-12 h-12"
-            />
-            <Button className="absolute right-0 top-0 h-12 px-4 bg-primary hover:bg-primary-dark">
-              <Search className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-
-        {/* Categories Navigation */}
-        <nav className="hidden lg:flex mt-6 pt-4 border-t border-border/40">
-          <div className="flex items-center justify-center w-full gap-2">
-            <Button
-              asChild
-              variant="ghost"
-              className="text-foreground hover:text-primary hover:bg-primary/10 font-semibold rounded-lg px-6 py-2.5 transition-all hover:scale-105"
-            >
-              <Link to="/african-market" className="flex items-center gap-2">
-                <Globe className="h-4 w-4" />
-                African Market
-              </Link>
-            </Button>
-
-            <div className="h-6 w-px bg-border/60 mx-1"></div>
-
-            {categories.map((category) => {
-              const to = category === 'Électronique' ? '/category/electronique' : '#';
-              return (
-                <Button
-                  key={category}
-                  asChild
-                  variant="ghost"
-                  className="text-foreground hover:text-primary hover:bg-primary/10 font-semibold rounded-lg px-6 py-2.5 transition-all hover:scale-105"
+        {/* ── MAIN NAV BAR ── */}
+        <motion.div
+          initial={false}
+          animate={{
+            backgroundColor: headerSolid ? "rgba(255,255,255,0.98)" : "rgba(0,0,0,0)",
+            backdropFilter: headerSolid ? "blur(20px)" : "blur(0px)",
+            borderBottomColor: headerSolid ? "#e8e8e8" : "transparent",
+          }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="w-full border-b"
+          style={{ WebkitBackdropFilter: headerSolid ? "blur(20px)" : "none" }}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10">
+            <div className="flex items-center justify-between h-14 lg:h-16">
+              {/* LEFT */}
+              <div className="flex-1 flex items-center gap-2 sm:gap-4">
+                {/* Mobile hamburger */}
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  className={`lg:hidden flex items-center transition-colors duration-300 ${
+                    headerSolid ? "text-[#19110b]" : "text-white"
+                  }`}
+                  aria-label="Menu"
                 >
-                  <Link to={to} className="flex items-center gap-2">
-                    <Zap className="h-4 w-4" />
-                    {category}
-                  </Link>
-                </Button>
-              );
-            })}
+                  <HiOutlineMenu size={22} />
+                </motion.button>
+                {/* Desktop hamburger + "Menu" */}
+                <motion.button
+                  whileHover={{ x: 2 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setIsMobileMenuOpen(true)}
+                  className={`hidden lg:flex items-center gap-2.5 transition-colors duration-300 ${
+                    headerSolid ? "text-[#19110b] hover:text-[#c5a467]" : "text-white hover:text-white/70"
+                  }`}
+                >
+                  <HiOutlineMenu size={18} />
+                  <span className="text-[11px] font-medium tracking-[0.15em] uppercase">Menu</span>
+                </motion.button>
 
-            <div className="h-6 w-px bg-border/60 mx-1"></div>
+                {/* Search */}
+                <div className={`hidden sm:flex items-center gap-2 ml-2 ${
+                  headerSolid ? "text-[#19110b]" : "text-white"
+                }`}>
+                  <HiOutlineSearch size={16} />
+                  <motion.button
+                    whileHover={{ x: 2 }}
+                    onClick={() => setSearchOpen(true)}
+                    className={`text-[11px] font-light tracking-[0.05em] transition-colors duration-300 ${
+                      headerSolid ? "text-[#757575] hover:text-[#19110b]" : "text-white/50 hover:text-white"
+                    }`}
+                  >
+                    Que recherchez-vous ?
+                  </motion.button>
+                </div>
+              </div>
 
-            <Button
-              asChild
-              variant="ghost"
-              className="text-foreground hover:text-primary hover:bg-primary/10 font-semibold rounded-lg px-6 py-2.5 transition-all hover:scale-105"
-            >
-              <Link to="/about" className="flex items-center gap-2">
-                <Info className="h-4 w-4" />
-                À propos
-              </Link>
-            </Button>
+              {/* CENTER — Logo */}
+              <motion.div
+                className="flex-shrink-0"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 400, damping: 20 }}
+              >
+                <button onClick={goHome} className="block whitespace-nowrap text-center">
+                  <motion.span
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className={`text-[16px] sm:text-[19px] lg:text-[24px] font-semibold tracking-[0.25em] lg:tracking-[0.35em] uppercase transition-colors duration-500 ${
+                      headerSolid ? "text-[#19110b]" : "text-white"
+                    }`}
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    Africa Market
+                  </motion.span>
+                </button>
+              </motion.div>
 
-            <Button
-              asChild
-              variant="ghost"
-              className="text-foreground hover:text-primary hover:bg-primary/10 font-semibold rounded-lg px-6 py-2.5 transition-all hover:scale-105"
-            >
-              <Link to="/services" className="flex items-center gap-2">
-                <Wrench className="h-4 w-4" />
-                Services
-              </Link>
-            </Button>
+              {/* RIGHT */}
+              <div className="flex-1 flex items-center justify-end gap-3 sm:gap-5">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setContactOpen(true)}
+                  className={`hidden lg:block text-[11px] font-light tracking-[0.08em] transition-colors duration-300 ${
+                    headerSolid ? "text-[#757575] hover:text-[#c5a467]" : "text-white/60 hover:text-white"
+                  }`}
+                >
+                  Contactez-nous
+                </motion.button>
+                {[
+                  { icon: HiOutlineHeart, label: "Favoris", onClick: undefined, show: "hidden sm:block" },
+                  { icon: HiOutlineUser, label: "Compte", onClick: () => navigate("/admin"), show: "hidden sm:block" },
+                ].map((item) => (
+                  <motion.button
+                    key={item.label}
+                    whileHover={{ scale: 1.15, y: -1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                    onClick={item.onClick}
+                    className={`${item.show} transition-colors duration-300 ${
+                      headerSolid ? "text-[#19110b] hover:text-[#c5a467]" : "text-white hover:text-[#c5a467]"
+                    }`}
+                    aria-label={item.label}
+                  >
+                    <item.icon size={20} />
+                  </motion.button>
+                ))}
+                {/* Cart */}
+                <motion.button
+                  whileHover={{ scale: 1.15, y: -1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  onClick={toggleCart}
+                  className={`relative transition-colors duration-300 ${
+                    headerSolid ? "text-[#19110b] hover:text-[#c5a467]" : "text-white hover:text-[#c5a467]"
+                  }`}
+                  aria-label="Panier"
+                >
+                  <HiOutlineShoppingBag size={20} />
+                  <AnimatePresence>
+                    {cartCount > 0 && (
+                      <motion.span
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                        className="absolute -top-2 -right-2 bg-[#c5a467] text-white text-[8px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center leading-none shadow-sm"
+                      >
+                        {cartCount}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </div>
+            </div>
           </div>
-        </nav>
-      </div>
+        </motion.div>
 
-      {/* Mobile menu */}
+        {/* ── CATEGORIES SUB-NAV BAR (fixed, scrollable) ── */}
+        <motion.div
+          initial={false}
+          animate={{
+            backgroundColor: headerSolid ? "rgba(250,249,247,0.98)" : "rgba(0,0,0,0.15)",
+            backdropFilter: headerSolid ? "blur(12px)" : "blur(8px)",
+          }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className={`w-full ${headerSolid ? "border-b border-[#e8e8e8]/60" : "border-b border-white/10"}`}
+          style={{ WebkitBackdropFilter: "blur(12px)" }}
+        >
+          <div className="max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-10">
+            <nav className="flex items-center justify-start lg:justify-center gap-0 overflow-x-auto scrollbar-hide">
+              {categoriesConfig.map((cat) => (
+                <motion.button
+                  key={cat.slug}
+                  whileHover={{ y: -1 }}
+                  onClick={() => goToCategory(cat.slug)}
+                  onMouseEnter={() => setActiveMenu(cat.slug)}
+                  className={`group relative text-[9px] sm:text-[10px] lg:text-[11px] font-medium tracking-[0.14em] sm:tracking-[0.18em] uppercase transition-all duration-300 py-2.5 sm:py-3 px-2.5 sm:px-3 lg:px-4 whitespace-nowrap flex-shrink-0 ${
+                    headerSolid
+                      ? "text-[#19110b]/80 hover:text-[#19110b]"
+                      : "text-white/80 hover:text-white"
+                  } ${
+                    activeMenu === cat.slug
+                      ? headerSolid ? "!text-[#c5a467]" : "!text-[#c5a467]"
+                      : ""
+                  }`}
+                >
+                  {cat.label}
+                  {/* Animated underline */}
+                  <motion.span
+                    className={`absolute bottom-1.5 left-3 right-3 h-[2px] rounded-full origin-left ${
+                      headerSolid ? "bg-[#c5a467]" : "bg-[#c5a467]"
+                    }`}
+                    initial={false}
+                    animate={{
+                      scaleX: activeMenu === cat.slug ? 1 : 0,
+                      opacity: activeMenu === cat.slug ? 1 : 0,
+                    }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                  />
+                </motion.button>
+              ))}
+            </nav>
+          </div>
+        </motion.div>
+
+        {/* ── MEGA MENU (desktop) ── */}
+        <AnimatePresence>
+          {activeMenu && activeCat && activeCat.subcategories.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, height: 0 }}
+              animate={{ opacity: 1, y: 0, height: "auto" }}
+              exit={{ opacity: 0, y: -8, height: 0 }}
+              transition={{ duration: 0.35, ease: [0.4, 0, 0.2, 1] }}
+              className="hidden lg:block absolute top-full left-0 w-full bg-white/98 backdrop-blur-xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border-t border-[#e8e8e8]/50 overflow-hidden"
+              onMouseLeave={() => setActiveMenu(null)}
+            >
+              <div className="max-w-[1400px] mx-auto px-10 py-10">
+                <div className="grid grid-cols-3 gap-10">
+                  {/* Subcategories list */}
+                  <motion.div
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1, duration: 0.4 }}
+                  >
+                    <h3 className="text-[11px] font-semibold tracking-[0.25em] uppercase text-[#c5a467] mb-6">
+                      {activeCat.label}
+                    </h3>
+                    <ul className="space-y-2.5 max-h-[300px] overflow-y-auto pr-2">
+                      {activeCat.subcategories.map((sub, i) => (
+                        <motion.li
+                          key={sub.slug}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.05 * i + 0.15 }}
+                        >
+                          <button
+                            onClick={() => goToSubcategory(activeCat.slug, sub.slug)}
+                            className="group/link flex items-center gap-2 text-[13px] text-[#757575] hover:text-[#19110b] transition-all duration-300 font-light"
+                          >
+                            <span className="w-0 group-hover/link:w-3 h-[1px] bg-[#c5a467] transition-all duration-300" />
+                            {sub.label}
+                          </button>
+                        </motion.li>
+                      ))}
+                    </ul>
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                      onClick={() => goToCategory(activeCat.slug)}
+                      className="mt-5 text-[10px] tracking-[0.15em] uppercase text-[#19110b] font-semibold hover:text-[#c5a467] transition-colors inline-flex items-center gap-2"
+                    >
+                      Voir tout
+                      <HiOutlineChevronRight size={12} />
+                    </motion.button>
+                  </motion.div>
+
+                  {/* Category image */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.15, duration: 0.5 }}
+                    className="overflow-hidden rounded-sm"
+                  >
+                    <motion.img
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.8 }}
+                      src={activeCat.image}
+                      alt={activeCat.label}
+                      className="w-full h-[280px] object-cover"
+                    />
+                  </motion.div>
+
+                  {/* Description */}
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.2, duration: 0.4 }}
+                    className="flex flex-col justify-center"
+                  >
+                    <p className="text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-3">
+                      Nouveautés
+                    </p>
+                    <p className="text-[15px] text-[#19110b] font-light leading-relaxed mb-8">
+                      Découvrez notre collection de{" "}
+                      {activeCat.label.toLowerCase()} d'exception, alliant
+                      savoir-faire africain et design contemporain.
+                    </p>
+                    <motion.button
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => goToCategory(activeCat.slug)}
+                      className="lv-btn self-start text-[10px]"
+                    >
+                      Voir la collection
+                    </motion.button>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      {/* ═══ SEARCH OVERLAY ═══ */}
       <AnimatePresence>
-        {isMenuOpen && (
+        {searchOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden bg-card border-t shadow-lg overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+            className="fixed inset-0 z-[110] bg-white flex flex-col"
           >
-            <div className="container mx-auto px-4 py-6">
-              <nav className="flex flex-col gap-2">
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="justify-start hover:bg-primary/10 hover:text-primary rounded-lg py-3 font-medium"
+            <motion.div
+              initial={{ y: -30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.15, duration: 0.5 }}
+              className="max-w-[800px] mx-auto w-full px-6 pt-20"
+            >
+              <div className="flex items-center gap-4 border-b-2 border-[#19110b] pb-4">
+                <HiOutlineSearch size={22} className="text-[#19110b]" />
+                <input
+                  autoFocus
+                  type="text"
+                  placeholder="Que recherchez-vous ?"
+                  className="flex-1 text-[18px] sm:text-[22px] text-[#19110b] font-light tracking-wide bg-transparent outline-none placeholder:text-[#c0c0c0]"
+                />
+                <motion.button
+                  whileHover={{ rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={() => setSearchOpen(false)}
+                  className="text-[#19110b] p-1"
                 >
-                  <Link to="/account" className="flex items-center" onClick={() => setIsMenuOpen(false)}>
-                    <User className="h-5 w-5 mr-3" />
-                    Mon Compte
-                  </Link>
-                </Button>
-
-                <div className="my-2 border-t border-border/40"></div>
-
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="justify-start hover:bg-primary/10 hover:text-primary rounded-lg py-3 font-medium"
-                >
-                  <Link to="/african-market" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3">
-                    <Globe className="h-5 w-5" />
-                    African Market
-                  </Link>
-                </Button>
-
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="justify-start hover:bg-primary/10 hover:text-primary rounded-lg py-3 font-medium"
-                >
-                  <Link to="/category/electronique" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3">
-                    <Zap className="h-5 w-5" />
-                    Électronique
-                  </Link>
-                </Button>
-
-                <div className="my-2 border-t border-border/40"></div>
-
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="justify-start hover:bg-primary/10 hover:text-primary rounded-lg py-3 font-medium"
-                >
-                  <Link to="/about" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3">
-                    <Info className="h-5 w-5" />
-                    À propos
-                  </Link>
-                </Button>
-
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="justify-start hover:bg-primary/10 hover:text-primary rounded-lg py-3 font-medium"
-                >
-                  <Link to="/services" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-3">
-                    <Wrench className="h-5 w-5" />
-                    Services
-                  </Link>
-                </Button>
-              </nav>
-            </div>
+                  <HiOutlineX size={24} />
+                </motion.button>
+              </div>
+              <div className="mt-10">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[#757575] mb-4">
+                  Recherches populaires
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {["Africa Market Bags", "Accessoires", "Cadeaux", "Services", "Achat Programmé"].map((tag, i) => (
+                    <motion.button
+                      key={tag}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 + i * 0.06 }}
+                      whileHover={{ scale: 1.05, backgroundColor: "#f6f5f3" }}
+                      onClick={() => setSearchOpen(false)}
+                      className="text-[12px] text-[#19110b] border border-[#e8e8e8] px-5 py-2.5 transition-colors"
+                    >
+                      {tag}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+
+      {/* ═══ MOBILE MENU — multi-level ═══ */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); }}
+              className="fixed inset-0 z-[99] bg-black/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className="fixed top-0 left-0 bottom-0 w-[85%] max-w-[400px] z-[100] bg-white flex flex-col shadow-2xl"
+            >
+              {/* Menu header */}
+              <div className="flex items-center justify-between px-5 h-16 border-b border-[#e8e8e8] shrink-0">
+                {mobileSubMenu ? (
+                  <motion.button
+                    initial={{ x: -10, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    onClick={() => setMobileSubMenu(null)}
+                    className="flex items-center gap-2 text-[13px] font-medium tracking-[0.15em] uppercase text-[#19110b]"
+                  >
+                    <HiOutlineArrowLeft size={18} />
+                    Retour
+                  </motion.button>
+                ) : (
+                  <span
+                    className="text-[14px] font-medium tracking-[0.25em] uppercase text-[#19110b]"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    Menu
+                  </span>
+                )}
+                <motion.button
+                  whileHover={{ rotate: 90 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); }}
+                  className="p-1.5 text-[#19110b] hover:bg-[#f6f5f3] rounded-full transition-colors"
+                  aria-label="Fermer"
+                >
+                  <HiOutlineX size={22} />
+                </motion.button>
+              </div>
+
+              {/* Menu content */}
+              <div className="flex-1 overflow-hidden relative">
+                <AnimatePresence mode="wait">
+                  {!mobileSubMenu ? (
+                    <motion.nav
+                      key="level1"
+                      initial={{ x: 0, opacity: 1 }}
+                      exit={{ x: -120, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="absolute inset-0 overflow-y-auto py-3"
+                    >
+                      {categoriesConfig.map((cat, i) => (
+                        <motion.div
+                          key={cat.slug}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                        >
+                          <button
+                            onClick={() => {
+                              if (cat.subcategories.length > 0) {
+                                setMobileSubMenu(cat);
+                              } else {
+                                goToCategory(cat.slug);
+                              }
+                            }}
+                            className="w-full flex items-center justify-between px-5 py-4 text-[13px] font-medium tracking-[0.12em] uppercase text-[#19110b] border-b border-[#f0f0f0] hover:bg-[#faf9f7] hover:pl-6 transition-all duration-300"
+                          >
+                            {cat.label}
+                            {cat.subcategories.length > 0 ? (
+                              <HiOutlineChevronRight size={16} className="text-[#c5a467]" />
+                            ) : (
+                              <span className="text-[#c0c0c0] text-lg">&rsaquo;</span>
+                            )}
+                          </button>
+                        </motion.div>
+                      ))}
+                      <motion.div
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.35 }}
+                      >
+                        <button
+                          onClick={() => { setIsMobileMenuOpen(false); navigate("/admin"); }}
+                          className="w-full flex items-center justify-between px-5 py-4 text-[13px] font-medium tracking-[0.12em] uppercase text-[#c5a467] border-b border-[#f0f0f0] hover:bg-[#faf9f7] hover:pl-6 transition-all duration-300"
+                        >
+                          Dashboard
+                          <span className="text-[#c0c0c0] text-lg">&rsaquo;</span>
+                        </button>
+                      </motion.div>
+                    </motion.nav>
+                  ) : (
+                    <motion.nav
+                      key="level2"
+                      initial={{ x: 120, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: 120, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="absolute inset-0 overflow-y-auto py-3"
+                    >
+                      <div className="px-5 py-4 border-b border-[#f0f0f0]">
+                        <motion.div
+                          initial={{ scale: 0.95, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ duration: 0.4 }}
+                          className="aspect-[16/9] overflow-hidden rounded-sm mb-3"
+                        >
+                          <img
+                            src={mobileSubMenu.image}
+                            alt={mobileSubMenu.label}
+                            className="w-full h-full object-cover"
+                          />
+                        </motion.div>
+                        <h3
+                          className="text-[14px] font-medium tracking-[0.15em] uppercase text-[#19110b]"
+                          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                        >
+                          {mobileSubMenu.label}
+                        </h3>
+                      </div>
+
+                      <button
+                        onClick={() => goToCategory(mobileSubMenu.slug)}
+                        className="w-full flex items-center justify-between px-5 py-4 text-[13px] font-medium tracking-[0.12em] uppercase text-[#c5a467] border-b border-[#f0f0f0] hover:bg-[#faf9f7] transition-colors"
+                      >
+                        Voir toute la collection
+                        <HiOutlineChevronRight size={14} />
+                      </button>
+
+                      {mobileSubMenu.subcategories.map((sub, i) => (
+                        <motion.div
+                          key={sub.slug}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                        >
+                          <button
+                            onClick={() => goToSubcategory(mobileSubMenu.slug, sub.slug)}
+                            className="w-full flex items-center justify-between px-5 py-3.5 text-[13px] font-light tracking-[0.06em] text-[#19110b] border-b border-[#f0f0f0] hover:bg-[#faf9f7] hover:pl-6 transition-all duration-300"
+                          >
+                            {sub.label}
+                            <span className="text-[#c0c0c0] text-lg">&rsaquo;</span>
+                          </button>
+                        </motion.div>
+                      ))}
+                    </motion.nav>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Bottom */}
+              <div className="border-t border-[#e8e8e8] px-5 py-5 space-y-3.5 shrink-0 bg-[#faf9f7]">
+                <button
+                  onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); setSearchOpen(true); }}
+                  className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
+                >
+                  <HiOutlineSearch size={17} /> Rechercher
+                </button>
+                <button
+                  onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); navigate("/admin"); }}
+                  className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
+                >
+                  <HiOutlineUser size={17} /> Mon Compte
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* ═══ CONTACT PANEL ═══ */}
+      <ContactPanel isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+    </>
   );
 };
 

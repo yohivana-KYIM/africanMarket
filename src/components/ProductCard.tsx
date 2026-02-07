@@ -1,0 +1,110 @@
+import { type FC } from "react";
+import { motion } from "framer-motion";
+import { HiOutlineShoppingBag } from "react-icons/hi";
+import type { Product } from "../types";
+import { formatPrice } from "../data/products";
+
+interface ProductCardProps {
+  product: Product;
+  onAddToCart: (product: Product) => void;
+  index?: number;
+}
+
+const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, index = 0 }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{
+        duration: 0.7,
+        delay: index * 0.1,
+        ease: [0.25, 0.46, 0.45, 0.94],
+      }}
+      className="group cursor-pointer"
+    >
+      {/* Image */}
+      <motion.div
+        whileHover={{ y: -4 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        className="relative overflow-hidden bg-[#f6f5f3] aspect-[3/4]"
+      >
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-700" />
+
+        {/* Add to cart — slides up on hover (hidden on touch, see below) */}
+        <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hidden sm:block">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart(product);
+            }}
+            className="w-full bg-[#19110b]/90 backdrop-blur-sm text-white text-[10px] font-medium tracking-[0.2em] uppercase py-3.5 sm:py-4 flex items-center justify-center gap-2 hover:bg-[#19110b] transition-colors"
+          >
+            <HiOutlineShoppingBag size={14} />
+            Ajouter au panier
+          </button>
+        </div>
+
+        {/* Mobile: always-visible add button */}
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAddToCart(product);
+          }}
+          className="sm:hidden absolute bottom-3 right-3 bg-[#19110b]/90 backdrop-blur-sm text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
+          aria-label="Ajouter au panier"
+        >
+          <HiOutlineShoppingBag size={16} />
+        </motion.button>
+
+        {/* Discount badge */}
+        {product.discount && (
+          <motion.span
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1 + 0.3, duration: 0.4 }}
+            className="absolute top-3 left-3 sm:top-4 sm:left-4 text-[9px] sm:text-[10px] tracking-[0.15em] uppercase font-medium text-[#19110b] bg-white/90 backdrop-blur-sm px-2.5 py-1 sm:px-3 sm:py-1.5"
+          >
+            -{product.discount}%
+          </motion.span>
+        )}
+      </motion.div>
+
+      {/* Product info */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ delay: index * 0.1 + 0.2, duration: 0.5 }}
+        className="pt-3 sm:pt-4 pb-2"
+      >
+        <p className="text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.2em] uppercase text-[#757575] font-light mb-1">
+          {product.category}
+        </p>
+        <h3 className="text-[12px] sm:text-[13px] md:text-[14px] text-[#19110b] font-normal leading-snug tracking-[0.02em] mb-1.5 sm:mb-2 group-hover:underline underline-offset-4 decoration-[0.5px]">
+          {product.name}
+        </h3>
+        <div className="flex items-center gap-2 sm:gap-2.5">
+          <span className="text-[12px] sm:text-[13px] text-[#19110b] font-normal tracking-[0.03em]">
+            {formatPrice(product.price)}
+          </span>
+          {product.oldPrice && (
+            <span className="text-[11px] sm:text-[12px] text-[#757575] line-through font-light">
+              {formatPrice(product.oldPrice)}
+            </span>
+          )}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default ProductCard;
