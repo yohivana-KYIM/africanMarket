@@ -13,6 +13,7 @@ import {
 } from "react-icons/hi";
 import ContactPanel from "./ContactPanel";
 import { categoriesConfig } from "../data/categories";
+import { useAuth } from "../context/AuthContext";
 import type { CategoryConfig } from "../types";
 
 interface HeaderProps {
@@ -29,6 +30,7 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
   const [contactOpen, setContactOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 60);
@@ -186,7 +188,7 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
                 </motion.button>
                 {[
                   { icon: HiOutlineHeart, label: "Favoris", onClick: undefined, show: "hidden sm:block" },
-                  { icon: HiOutlineUser, label: "Compte", onClick: () => navigate("/admin"), show: "hidden sm:block" },
+                  { icon: HiOutlineUser, label: "Compte", onClick: () => navigate(user ? "/admin" : "/login"), show: "hidden sm:block" },
                 ].map((item) => (
                   <motion.button
                     key={item.label}
@@ -608,12 +610,29 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
                 >
                   <HiOutlineSearch size={17} /> Rechercher
                 </button>
-                <button
-                  onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); navigate("/admin"); }}
-                  className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
-                >
-                  <HiOutlineUser size={17} /> Mon Compte
-                </button>
+                {user ? (
+                  <>
+                    <button
+                      onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); navigate("/admin"); }}
+                      className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
+                    >
+                      <HiOutlineUser size={17} /> {user.name}
+                    </button>
+                    <button
+                      onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); logout(); navigate("/"); }}
+                      className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-red-500 hover:text-red-700 w-full transition-colors"
+                    >
+                      Déconnexion
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); navigate("/login"); }}
+                    className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
+                  >
+                    <HiOutlineUser size={17} /> Se connecter
+                  </button>
+                )}
               </div>
             </motion.div>
           </>

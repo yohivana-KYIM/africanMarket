@@ -1,5 +1,5 @@
 import { type FC } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -8,8 +8,17 @@ import BackToTop from "./components/BackToTop";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
 import Admin from "./pages/Admin";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { useCart } from "./hooks/useCart";
 import { useProducts } from "./hooks/useProducts";
+import { useAuth } from "./context/AuthContext";
+
+const ProtectedRoute: FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+};
 
 const AppLayout: FC = () => {
   const {
@@ -69,7 +78,9 @@ const AppLayout: FC = () => {
           path="/categorie/:slug/:sub"
           element={siteLayout(<Category addToCart={addToCart} products={products} />)}
         />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={<ProtectedRoute><Admin /></ProtectedRoute>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </div>
   );
