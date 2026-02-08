@@ -11,8 +11,8 @@ interface CartProps {
   onClose: () => void;
   cartItems: CartItem[];
   cartTotal: number;
-  updateQuantity: (productId: number, quantity: number) => void;
-  removeFromCart: (productId: number) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
   clearCart: () => void;
 }
 

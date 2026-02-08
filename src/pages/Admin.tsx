@@ -40,8 +40,8 @@ const Admin: FC = () => {
   const { products, addProduct, updateProduct, deleteProduct, resetToDefaults } = useProducts();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [form, setForm] = useState(emptyForm);
-  const [editId, setEditId] = useState<number | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filterCat, setFilterCat] = useState("all");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -92,7 +92,7 @@ const Admin: FC = () => {
 
   const currentCatConfig = categoriesConfig.find((c) => c.slug === form.categorySlug);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.image || form.price <= 0) return;
 
@@ -102,14 +102,18 @@ const Admin: FC = () => {
       discount: form.discount || null,
     };
 
-    if (editId !== null) {
-      updateProduct(editId, productData);
-      setEditId(null);
-    } else {
-      addProduct(productData);
+    try {
+      if (editId !== null) {
+        await updateProduct(editId, productData);
+        setEditId(null);
+      } else {
+        await addProduct(productData);
+      }
+      setForm(emptyForm);
+      setActiveTab("products");
+    } catch (error) {
+      console.error(error);
     }
-    setForm(emptyForm);
-    setActiveTab("products");
   };
 
   const startEdit = (product: Product) => {
@@ -130,8 +134,12 @@ const Admin: FC = () => {
     setActiveTab("edit");
   };
 
-  const handleDelete = (id: number) => {
-    deleteProduct(id);
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteProduct(id);
+    } catch (error) {
+      console.error(error);
+    }
     setDeleteConfirm(null);
   };
 

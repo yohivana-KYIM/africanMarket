@@ -3,7 +3,7 @@ import type { Product, HeroSlide } from "../types";
 export const products: Product[] = [
   // AFRICA MARKET BAGS
   {
-    id: 1,
+    id: "default-1",
     name: "Sac Bandoulière Wax Luxe",
     category: "Africa Market Bags",
     categorySlug: "africa-market-bags",
@@ -17,7 +17,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 2,
+    id: "default-2",
     name: "Sac à Main Bogolan",
     category: "Africa Market Bags",
     categorySlug: "africa-market-bags",
@@ -31,7 +31,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 4,
+    id: "default-3",
     name: "Clutch Soirée Cuir",
     category: "Africa Market Bags",
     categorySlug: "africa-market-bags",
@@ -45,7 +45,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 3,
+    id: "default-4",
     name: "Sac à Dos Kente Premium",
     category: "Africa Market Bags",
     categorySlug: "africa-market-bags",
@@ -59,7 +59,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 6,
+    id: "default-5",
     name: "Mini Sac Sport",
     category: "Africa Market Bags",
     categorySlug: "africa-market-bags",
@@ -73,7 +73,7 @@ export const products: Product[] = [
     featured: false,
   },
   {
-    id: 5,
+    id: "default-6",
     name: "Sac Voyage XL",
     category: "Africa Market Bags",
     categorySlug: "africa-market-bags",
@@ -88,7 +88,7 @@ export const products: Product[] = [
   },
   // ACCESSOIRES
   {
-    id: 7,
+    id: "default-7",
     name: "Sandales Cuir Chèvre",
     category: "Accessoires",
     categorySlug: "accessoires",
@@ -102,7 +102,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 8,
+    id: "default-8",
     name: "Baskets Wax",
     category: "Accessoires",
     categorySlug: "accessoires",
@@ -116,7 +116,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 9,
+    id: "default-9",
     name: "Escarpins Cuir",
     category: "Accessoires",
     categorySlug: "accessoires",
@@ -131,7 +131,7 @@ export const products: Product[] = [
   },
   // CADEAUX ÉVÉNEMENT
   {
-    id: 10,
+    id: "default-10",
     name: "Oud Africain 100ml",
     category: "Cadeaux Événement",
     categorySlug: "cadeaux",
@@ -145,7 +145,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 11,
+    id: "default-11",
     name: "Ylang-Ylang 50ml",
     category: "Cadeaux Événement",
     categorySlug: "cadeaux",
@@ -159,7 +159,7 @@ export const products: Product[] = [
     featured: true,
   },
   {
-    id: 12,
+    id: "default-12",
     name: "Baobab Épices 100ml",
     category: "Cadeaux Événement",
     categorySlug: "cadeaux",

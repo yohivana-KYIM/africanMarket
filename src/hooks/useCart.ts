@@ -20,8 +20,8 @@ interface UseCartReturn {
   setIsCartOpen: (open: boolean) => void;
   toggleCart: () => void;
   addToCart: (product: Product) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
+  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
 }
 
@@ -47,11 +47,11 @@ export const useCart = (): UseCartReturn => {
     });
   }, []);
 
-  const removeFromCart = useCallback((productId: number) => {
+  const removeFromCart = useCallback((productId: string) => {
     setCartItems((prev) => prev.filter((item) => item.id !== productId));
   }, []);
 
-  const updateQuantity = useCallback((productId: number, quantity: number) => {
+  const updateQuantity = useCallback((productId: string, quantity: number) => {
     if (quantity <= 0) {
       setCartItems((prev) => prev.filter((item) => item.id !== productId));
       return;

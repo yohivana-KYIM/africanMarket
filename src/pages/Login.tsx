@@ -16,7 +16,7 @@ const Login: FC = () => {
     setError('');
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/admin');
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Erreur de connexion');
     }
