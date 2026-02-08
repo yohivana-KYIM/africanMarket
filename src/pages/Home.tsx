@@ -10,6 +10,8 @@ import type { Product } from "../types";
 interface HomeProps {
   addToCart: (product: Product) => void;
   products: Product[];
+  toggleWishlist: (product: Product) => void;
+  isInWishlist: (productId: string) => boolean;
 }
 
 const fadeUp = {
@@ -17,7 +19,7 @@ const fadeUp = {
   visible: { opacity: 1, y: 0 },
 };
 
-const Home: FC<HomeProps> = ({ addToCart, products }) => {
+const Home: FC<HomeProps> = ({ addToCart, products, toggleWishlist, isInWishlist }) => {
   const handleAddToCart = (product: Product) => {
     addToCart(product);
     toast(
@@ -31,11 +33,22 @@ const Home: FC<HomeProps> = ({ addToCart, products }) => {
     );
   };
 
+  const handleToggleWishlist = (product: Product) => {
+    const wasIn = isInWishlist(product.id);
+    toggleWishlist(product);
+    toast(
+      <span className="text-[12px] tracking-[0.03em]">
+        <strong>{product.name}</strong> — {wasIn ? "retiré des favoris" : "ajouté aux favoris"}
+      </span>,
+      { icon: wasIn ? "♡" : "♥", style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } }
+    );
+  };
+
   const featured = products.filter((p) => p.featured);
 
   // Main product categories for grid display
   const displayCategories = categoriesConfig.filter(
-    (c) => !["achat-programme", "services"].includes(c.slug)
+    (c) => !["achat-programme", "services", "cadeaux"].includes(c.slug)
   );
 
   return (
@@ -191,7 +204,7 @@ const Home: FC<HomeProps> = ({ addToCart, products }) => {
 
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 lg:gap-x-7">
               {featured.slice(0, 6).map((product, i) => (
-                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} index={i} />
+                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} onToggleWishlist={handleToggleWishlist} isInWishlist={isInWishlist(product.id)} index={i} />
               ))}
             </div>
           </div>
@@ -260,7 +273,7 @@ const Home: FC<HomeProps> = ({ addToCart, products }) => {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {/* Achat Programmé */}
             <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp} whileHover={{ y: -5 }}>
               <Link to="/categorie/achat-programme" className="block bg-[#f6f5f3] p-6 sm:p-8 text-center hover:bg-[#f0eeea] transition-colors group">
@@ -299,27 +312,6 @@ const Home: FC<HomeProps> = ({ addToCart, products }) => {
                 </p>
                 <span className="text-[10px] tracking-[0.15em] uppercase text-[#19110b] font-medium group-hover:underline underline-offset-4">
                   Découvrir
-                </span>
-              </Link>
-            </motion.div>
-
-            {/* Cadeaux */}
-            <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }} variants={fadeUp} whileHover={{ y: -5 }}>
-              <Link to="/categorie/cadeaux" className="block bg-[#f6f5f3] p-6 sm:p-8 text-center hover:bg-[#f0eeea] transition-colors group">
-                <p className="text-[9px] sm:text-[10px] tracking-[0.2em] uppercase text-[#c5a467] mb-3">
-                  Événement
-                </p>
-                <h3
-                  className="text-[16px] sm:text-[18px] text-[#19110b] font-light mb-3"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Cadeaux Événement
-                </h3>
-                <p className="text-[12px] text-[#757575] font-light leading-relaxed mb-4">
-                  Offrez l'exception. Cadeaux pour elle et pour lui, emballage luxe inclus.
-                </p>
-                <span className="text-[10px] tracking-[0.15em] uppercase text-[#19110b] font-medium group-hover:underline underline-offset-4">
-                  Explorer
                 </span>
               </Link>
             </motion.div>

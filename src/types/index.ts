@@ -52,3 +52,22 @@ export interface FooterSection {
   title: string;
   links: string[];
 }
+
+export interface PaginatedResponse {
+  products: Product[];
+  total: number;
+  page: number;
+  pages: number;
+}
+
+export interface ProductFilters {
+  page?: number;
+  limit?: number;
+  category?: string;
+  subcategory?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  search?: string;
+  featured?: boolean;
+  sort?: string;
+}

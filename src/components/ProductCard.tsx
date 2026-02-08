@@ -1,16 +1,21 @@
 import { type FC } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { HiOutlineShoppingBag } from "react-icons/hi";
+import { HiOutlineShoppingBag, HiOutlineHeart, HiHeart } from "react-icons/hi";
 import type { Product } from "../types";
 import { formatPrice } from "../data/products";
 
 interface ProductCardProps {
   product: Product;
   onAddToCart: (product: Product) => void;
+  onToggleWishlist?: (product: Product) => void;
+  isInWishlist?: boolean;
   index?: number;
 }
 
-const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, index = 0 }) => {
+const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishlist, isInWishlist, index = 0 }) => {
+  const navigate = useNavigate();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -22,6 +27,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, index = 0 }) 
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
       className="group cursor-pointer"
+      onClick={() => navigate(`/product/${product.id}`)}
     >
       {/* Image */}
       <motion.div
@@ -37,7 +43,26 @@ const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, index = 0 }) 
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-700" />
 
-        {/* Add to cart — slides up on hover (hidden on touch, see below) */}
+        {/* Wishlist heart */}
+        {onToggleWishlist && (
+          <motion.button
+            whileTap={{ scale: 0.8 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleWishlist(product);
+            }}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 bg-white/90 backdrop-blur-sm flex items-center justify-center transition-colors z-10 hover:bg-white"
+            aria-label={isInWishlist ? "Retirer des favoris" : "Ajouter aux favoris"}
+          >
+            {isInWishlist ? (
+              <HiHeart size={16} className="text-[#c5a467]" />
+            ) : (
+              <HiOutlineHeart size={16} className="text-[#19110b]" />
+            )}
+          </motion.button>
+        )}
+
+        {/* Add to cart — slides up on hover (hidden on touch) */}
         <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hidden sm:block">
           <button
             onClick={(e) => {

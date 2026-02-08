@@ -13,15 +13,19 @@ import {
 } from "react-icons/hi";
 import ContactPanel from "./ContactPanel";
 import { categoriesConfig } from "../data/categories";
+import { formatPrice } from "../data/products";
 import { useAuth } from "../context/AuthContext";
+import { useSearch } from "../hooks/useSearch";
 import type { CategoryConfig } from "../types";
 
 interface HeaderProps {
   cartCount: number;
   toggleCart: () => void;
+  wishlistCount: number;
+  toggleWishlist: () => void;
 }
 
-const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
+const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleWishlist }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
@@ -31,6 +35,7 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const { results, loading: searchLoading, query, search, clearSearch } = useSearch();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 60);
@@ -41,6 +46,11 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen || searchOpen ? "hidden" : "";
   }, [isMobileMenuOpen, searchOpen]);
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    clearSearch();
+  };
 
   const goHome = () => {
     if (location.pathname !== "/") {
@@ -186,24 +196,48 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
                 >
                   Contactez-nous
                 </motion.button>
-                {[
-                  { icon: HiOutlineHeart, label: "Favoris", onClick: undefined, show: "hidden sm:block" },
-                  { icon: HiOutlineUser, label: "Compte", onClick: () => navigate(user ? "/admin" : "/login"), show: "hidden sm:block" },
-                ].map((item) => (
-                  <motion.button
-                    key={item.label}
-                    whileHover={{ scale: 1.15, y: -1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 15 }}
-                    onClick={item.onClick}
-                    className={`${item.show} transition-colors duration-300 ${
-                      headerSolid ? "text-[#19110b] hover:text-[#c5a467]" : "text-white hover:text-[#c5a467]"
-                    }`}
-                    aria-label={item.label}
-                  >
-                    <item.icon size={20} />
-                  </motion.button>
-                ))}
+
+                {/* Wishlist */}
+                <motion.button
+                  whileHover={{ scale: 1.15, y: -1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  onClick={toggleWishlist}
+                  className={`hidden sm:block relative transition-colors duration-300 ${
+                    headerSolid ? "text-[#19110b] hover:text-[#c5a467]" : "text-white hover:text-[#c5a467]"
+                  }`}
+                  aria-label="Favoris"
+                >
+                  <HiOutlineHeart size={20} />
+                  <AnimatePresence>
+                    {wishlistCount > 0 && (
+                      <motion.span
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                        className="absolute -top-2 -right-2 bg-[#c5a467] text-white text-[8px] font-bold w-[18px] h-[18px] rounded-full flex items-center justify-center leading-none shadow-sm"
+                      >
+                        {wishlistCount}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+
+                {/* Account */}
+                <motion.button
+                  whileHover={{ scale: 1.15, y: -1 }}
+                  whileTap={{ scale: 0.9 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  onClick={() => navigate(user ? "/admin" : "/login")}
+                  className={`hidden sm:block transition-colors duration-300 ${
+                    headerSolid ? "text-[#19110b] hover:text-[#c5a467]" : "text-white hover:text-[#c5a467]"
+                  }`}
+                  aria-label="Compte"
+                >
+                  <HiOutlineUser size={20} />
+                </motion.button>
+
                 {/* Cart */}
                 <motion.button
                   whileHover={{ scale: 1.15, y: -1 }}
@@ -396,13 +430,15 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
               initial={{ y: -30, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.15, duration: 0.5 }}
-              className="max-w-[800px] mx-auto w-full px-6 pt-20"
+              className="max-w-[800px] mx-auto w-full px-4 sm:px-6 pt-16 sm:pt-20"
             >
               <div className="flex items-center gap-4 border-b-2 border-[#19110b] pb-4">
                 <HiOutlineSearch size={22} className="text-[#19110b]" />
                 <input
                   autoFocus
                   type="text"
+                  value={query}
+                  onChange={(e) => search(e.target.value)}
                   placeholder="Que recherchez-vous ?"
                   className="flex-1 text-[18px] sm:text-[22px] text-[#19110b] font-light tracking-wide bg-transparent outline-none placeholder:text-[#c0c0c0]"
                 />
@@ -410,31 +446,75 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
                   whileHover={{ rotate: 90 }}
                   whileTap={{ scale: 0.9 }}
                   transition={{ duration: 0.3 }}
-                  onClick={() => setSearchOpen(false)}
+                  onClick={closeSearch}
                   className="text-[#19110b] p-1"
                 >
                   <HiOutlineX size={24} />
                 </motion.button>
               </div>
-              <div className="mt-10">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-[#757575] mb-4">
-                  Recherches populaires
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {["Africa Market Bags", "Accessoires", "Cadeaux", "Services", "Achat Programmé"].map((tag, i) => (
-                    <motion.button
-                      key={tag}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 + i * 0.06 }}
-                      whileHover={{ scale: 1.05, backgroundColor: "#f6f5f3" }}
-                      onClick={() => setSearchOpen(false)}
-                      className="text-[12px] text-[#19110b] border border-[#e8e8e8] px-5 py-2.5 transition-colors"
-                    >
-                      {tag}
-                    </motion.button>
-                  ))}
-                </div>
+
+              {/* Search results or popular searches */}
+              <div className="mt-8">
+                {!query.trim() ? (
+                  <>
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-[#757575] mb-4">
+                      Recherches populaires
+                    </p>
+                    <div className="flex flex-wrap gap-3">
+                      {["Africa Market Bags", "Accessoires", "Cadeaux", "Sandales", "Sac"].map((tag, i) => (
+                        <motion.button
+                          key={tag}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.2 + i * 0.06 }}
+                          whileHover={{ scale: 1.05, backgroundColor: "#f6f5f3" }}
+                          onClick={() => search(tag)}
+                          className="text-[12px] text-[#19110b] border border-[#e8e8e8] px-5 py-2.5 transition-colors"
+                        >
+                          {tag}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </>
+                ) : searchLoading ? (
+                  <div className="flex items-center gap-3 py-8">
+                    <div className="w-5 h-5 border-2 border-[#e8e8e8] border-t-[#c5a467] rounded-full animate-spin" />
+                    <span className="text-[12px] text-[#757575]">Recherche en cours...</span>
+                  </div>
+                ) : results.length > 0 ? (
+                  <div className="space-y-1 max-h-[60vh] overflow-y-auto">
+                    <p className="text-[10px] tracking-[0.2em] uppercase text-[#757575] mb-3">
+                      {results.length} résultat{results.length !== 1 ? "s" : ""}
+                    </p>
+                    {results.map((product) => (
+                      <motion.button
+                        key={product.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        onClick={() => {
+                          closeSearch();
+                          navigate(`/product/${product.id}`);
+                        }}
+                        className="w-full flex items-center gap-4 py-3 px-2 hover:bg-[#f6f5f3] transition-colors"
+                      >
+                        <div className="w-12 h-16 sm:w-14 sm:h-18 bg-[#f6f5f3] overflow-hidden shrink-0">
+                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 text-left min-w-0">
+                          <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575]">{product.category}</p>
+                          <p className="text-[13px] text-[#19110b] font-normal truncate">{product.name}</p>
+                          <p className="text-[12px] text-[#19110b] font-medium">{formatPrice(product.price)}</p>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="py-8 text-center">
+                    <p className="text-[13px] text-[#757575] font-light">
+                      Aucun résultat pour "<span className="text-[#19110b]">{query}</span>"
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -609,6 +689,12 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart }) => {
                   className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
                 >
                   <HiOutlineSearch size={17} /> Rechercher
+                </button>
+                <button
+                  onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); toggleWishlist(); }}
+                  className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
+                >
+                  <HiOutlineHeart size={17} /> Favoris {wishlistCount > 0 && `(${wishlistCount})`}
                 </button>
                 {user ? (
                   <>

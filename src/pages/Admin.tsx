@@ -1,6 +1,7 @@
 import { useState, useRef, type FC, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 import {
   HiOutlineArrowLeft,
   HiOutlinePlus,
@@ -106,13 +107,16 @@ const Admin: FC = () => {
       if (editId !== null) {
         await updateProduct(editId, productData);
         setEditId(null);
+        toast.success("Produit modifié avec succès", { style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } });
       } else {
         await addProduct(productData);
+        toast.success("Produit ajouté avec succès", { style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } });
       }
       setForm(emptyForm);
       setActiveTab("products");
     } catch (error) {
       console.error(error);
+      toast.error("Erreur lors de l'opération", { style: { borderRadius: "0", fontSize: "12px" } });
     }
   };
 
@@ -137,8 +141,10 @@ const Admin: FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteProduct(id);
+      toast.success("Produit supprimé", { style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } });
     } catch (error) {
       console.error(error);
+      toast.error("Erreur lors de la suppression", { style: { borderRadius: "0", fontSize: "12px" } });
     }
     setDeleteConfirm(null);
   };

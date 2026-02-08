@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Product } from "../types";
+import type { Product, ProductFilters } from "../types";
 import { products as defaultProducts } from "../data/products";
 import environment from "../environment";
 
@@ -23,7 +23,7 @@ const authHeaders = (): Record<string, string> => {
   return headers;
 };
 
-const mapProduct = (doc: any): Product => ({
+export const mapProduct = (doc: any): Product => ({
   id: doc._id,
   name: doc.name,
   category: doc.category || "",
@@ -38,17 +38,46 @@ const mapProduct = (doc: any): Product => ({
   featured: doc.featured || false,
 });
 
+export const fetchProductById = async (id: string): Promise<Product | null> => {
+  try {
+    const res = await fetch(`${API}/${id}`);
+    if (!res.ok) return null;
+    const doc = await res.json();
+    return mapProduct(doc);
+  } catch {
+    return null;
+  }
+};
+
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
 
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = useCallback(async (filters?: ProductFilters) => {
     try {
       setLoading(true);
-      const res = await fetch(API);
+      const params = new URLSearchParams();
+      if (filters?.page) params.set("page", String(filters.page));
+      if (filters?.limit) params.set("limit", String(filters.limit));
+      if (filters?.category) params.set("category", filters.category);
+      if (filters?.subcategory) params.set("subcategory", filters.subcategory);
+      if (filters?.minPrice) params.set("minPrice", String(filters.minPrice));
+      if (filters?.maxPrice) params.set("maxPrice", String(filters.maxPrice));
+      if (filters?.search) params.set("search", filters.search);
+      if (filters?.featured) params.set("featured", "true");
+      if (filters?.sort) params.set("sort", filters.sort);
+
+      const url = params.toString() ? `${API}?${params}` : `${API}?limit=200`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error("Fetch failed");
       const data = await res.json();
-      setProducts(data.map(mapProduct));
+      setProducts(data.products.map(mapProduct));
+      setTotal(data.total);
+      setPage(data.page);
+      setPages(data.pages);
     } catch {
       setProducts(defaultProducts);
     } finally {
@@ -113,5 +142,5 @@ export const useProducts = () => {
     setProducts(created.map(mapProduct));
   }, [products]);
 
-  return { products, loading, addProduct, updateProduct, deleteProduct, resetToDefaults };
+  return { products, loading, total, page, pages, fetchProducts, addProduct, updateProduct, deleteProduct, resetToDefaults };
 };

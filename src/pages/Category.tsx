@@ -11,6 +11,8 @@ import type { Product } from "../types";
 interface CategoryProps {
   addToCart: (product: Product) => void;
   products: Product[];
+  toggleWishlist: (product: Product) => void;
+  isInWishlist: (productId: string) => boolean;
 }
 
 const fadeUp = {
@@ -31,7 +33,7 @@ const staggerItem = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const } },
 };
 
-const Category: FC<CategoryProps> = ({ addToCart, products }) => {
+const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isInWishlist }) => {
   const { slug, sub } = useParams<{ slug: string; sub?: string }>();
   const navigate = useNavigate();
 
@@ -80,6 +82,17 @@ const Category: FC<CategoryProps> = ({ addToCart, products }) => {
         icon: "✓",
         style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" },
       }
+    );
+  };
+
+  const handleToggleWishlist = (product: Product) => {
+    const wasIn = isInWishlist(product.id);
+    toggleWishlist(product);
+    toast(
+      <span className="text-[12px] tracking-[0.03em]">
+        <strong>{product.name}</strong> — {wasIn ? "retiré des favoris" : "ajouté aux favoris"}
+      </span>,
+      { icon: wasIn ? "♡" : "♥", style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } }
     );
   };
 
@@ -146,7 +159,7 @@ const Category: FC<CategoryProps> = ({ addToCart, products }) => {
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 lg:gap-x-7">
               {filteredProducts.map((product, i) => (
-                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} index={i} />
+                <ProductCard key={product.id} product={product} onAddToCart={handleAddToCart} onToggleWishlist={handleToggleWishlist} isInWishlist={isInWishlist(product.id)} index={i} />
               ))}
             </div>
           ) : (
