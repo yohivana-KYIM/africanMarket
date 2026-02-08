@@ -8,6 +8,7 @@ import WishlistPanel from "./components/WishlistPanel";
 import BackToTop from "./components/BackToTop";
 import Home from "./pages/Home";
 import Category from "./pages/Category";
+import Collections from "./pages/Collections";
 import ProductDetail from "./pages/ProductDetail";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
@@ -101,6 +102,10 @@ const AppLayout: FC = () => {
               isInWishlist={isInWishlist}
             />
           )}
+        />
+        <Route
+          path="/collections"
+          element={siteLayout(<Collections />)}
         />
         <Route
           path="/categorie/:slug"

@@ -29,7 +29,7 @@ export const formatWhatsAppMessage = (
 
 export const sendWhatsApp = (
   message: string,
-  phoneNumber: string = "237671178991"
+  phoneNumber: string = "237651711545"
 ): void => {
   const encoded = encodeURIComponent(message);
   window.open(`https://wa.me/${phoneNumber}?text=${encoded}`, "_blank");

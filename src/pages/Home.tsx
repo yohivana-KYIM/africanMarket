@@ -246,7 +246,7 @@ const Home: FC<HomeProps> = ({ addToCart, products, toggleWishlist, isInWishlist
               L'artisanat africain sublimé
             </h2>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-              <Link to="/categorie/africa-market-bags" className="lv-btn lv-btn-white text-[10px]">
+              <Link to="/collections" className="lv-btn lv-btn-white text-[10px]">
                 Nos collections
               </Link>
             </motion.div>

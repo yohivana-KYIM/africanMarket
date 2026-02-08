@@ -122,17 +122,17 @@ const ContactPanel: FC<ContactPanelProps> = ({ isOpen, onClose }) => {
                     {/* Contact options */}
                     <div className="space-y-1">
                       <a
-                        href="tel:+237671178991"
+                        href="tel:+237651711545"
                         className="flex items-center gap-4 py-4 text-[#19110b] hover:text-[#6b4c3b] transition-colors group"
                       >
                         <HiOutlinePhone size={20} className="shrink-0" />
                         <span className="text-[14px] sm:text-[15px] font-light tracking-wide group-hover:underline underline-offset-4">
-                          +237 671 178 991
+                          +237 651 711 545
                         </span>
                       </a>
 
                       <a
-                        href="https://wa.me/237671178991"
+                        href="https://wa.me/237651711545"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-4 py-4 text-[#19110b] hover:text-[#25D366] transition-colors group"
@@ -185,7 +185,7 @@ const ContactPanel: FC<ContactPanelProps> = ({ isOpen, onClose }) => {
                     <div className="space-y-1">
                       <button
                         onClick={() => {
-                          window.open("https://wa.me/237671178991?text=Bonjour%2C%20j%27ai%20besoin%20d%27aide", "_blank");
+                          window.open("https://wa.me/237651711545?text=Bonjour%2C%20j%27ai%20besoin%20d%27aide", "_blank");
                         }}
                         className="flex items-center justify-between w-full py-3.5 text-[#19110b] hover:text-[#6b4c3b] transition-colors group"
                       >
@@ -285,7 +285,7 @@ const ContactPanel: FC<ContactPanelProps> = ({ isOpen, onClose }) => {
                         Notre équipe est disponible 7j/7 pour vous aider.
                       </p>
                       <a
-                        href="https://wa.me/237671178991?text=Bonjour%2C%20j%27ai%20une%20question"
+                        href="https://wa.me/237651711545?text=Bonjour%2C%20j%27ai%20une%20question"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-[#25D366] text-white text-[11px] tracking-[0.1em] uppercase px-5 py-3 hover:bg-[#20bd5a] transition-colors"

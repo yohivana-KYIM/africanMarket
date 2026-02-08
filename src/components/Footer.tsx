@@ -155,7 +155,7 @@ const Footer: FC = () => {
             {/* Social icons */}
             <div className="flex items-center gap-6">
               <a
-                href="https://wa.me/237671178991"
+                href="https://wa.me/237651711545"
                 className="text-white/30 hover:text-[#25D366] transition-colors"
                 aria-label="WhatsApp"
               >
