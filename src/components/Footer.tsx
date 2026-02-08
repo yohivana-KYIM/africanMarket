@@ -1,5 +1,5 @@
 import { useState, type FC, type FormEvent } from "react";
-import { FaWhatsapp, FaInstagram, FaTiktok } from "react-icons/fa";
+import { FaWhatsapp, FaInstagram, FaTiktok, FaFacebook } from "react-icons/fa";
 import { HiChevronDown } from "react-icons/hi";
 import toast from "react-hot-toast";
 import type { FooterSection } from "../types";
@@ -162,6 +162,15 @@ const Footer: FC = () => {
                 <FaWhatsapp size={18} />
               </a>
               <a
+                href="https://www.facebook.com/KAMITE.BENDOZA?mibextid=ZbWKwL"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white/30 hover:text-[#1877F2] transition-colors"
+                aria-label="Facebook"
+              >
+                <FaFacebook size={18} />
+              </a>
+              <a
                 href="#"
                 className="text-white/30 hover:text-white/70 transition-colors"
                 aria-label="Instagram"
@@ -176,6 +185,14 @@ const Footer: FC = () => {
                 <FaTiktok size={16} />
               </a>
             </div>
+
+            {/* Email */}
+            <a
+              href="mailto:africamarketbags@gmail.com"
+              className="text-[10px] sm:text-[11px] text-white/30 hover:text-white/60 tracking-[0.1em] transition-colors"
+            >
+              africamarketbags@gmail.com
+            </a>
 
             {/* Legal */}
             <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">

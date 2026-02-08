@@ -144,7 +144,7 @@ const ContactPanel: FC<ContactPanelProps> = ({ isOpen, onClose }) => {
                       </a>
 
                       <a
-                        href="mailto:contact@africamarketbag.store"
+                        href="mailto:africamarketbags@gmail.com"
                         className="flex items-center gap-4 py-4 text-[#19110b] hover:text-[#6b4c3b] transition-colors group"
                       >
                         <HiOutlineMail size={20} className="shrink-0" />
