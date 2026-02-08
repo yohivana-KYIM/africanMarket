@@ -2,6 +2,7 @@ import { type FC } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { HiOutlineChevronRight } from "react-icons/hi";
+import SEO from "../components/SEO";
 import { categoriesConfig } from "../data/categories";
 
 const fadeUp = {
@@ -37,6 +38,12 @@ const Collections: FC = () => {
       transition={{ duration: 0.5 }}
       className="w-full"
     >
+      <SEO
+        title="Nos Collections"
+        description="Découvrez toutes les collections Africa Market : sacs wax, accessoires bogolan, chaussures cuir, cadeaux événementiels. Artisanat africain de luxe."
+        canonical="/collections"
+      />
+
       {/* Hero Banner */}
       <section className="relative h-[50vh] sm:h-[55vh] lg:h-[60vh] overflow-hidden">
         <motion.div

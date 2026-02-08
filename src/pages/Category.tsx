@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { HiOutlineChevronRight } from "react-icons/hi";
 import toast from "react-hot-toast";
+import SEO from "../components/SEO";
 import { categoriesConfig, getCategoryBySlug, getSubcategory } from "../data/categories";
 import { formatPrice } from "../data/products";
 import ProductCard from "../components/ProductCard";
@@ -109,6 +110,21 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
         transition={{ duration: 0.5 }}
         className="w-full pt-28 sm:pt-32 lg:pt-36"
       >
+        <SEO
+          title={`${subcategory.label} - ${category.label}`}
+          description={`Découvrez notre sélection ${subcategory.label} dans la collection ${category.label}. Artisanat africain de luxe, livraison au Cameroun.`}
+          canonical={`/categorie/${category.slug}/${subcategory.slug}`}
+          jsonLd={{
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://africamarket.store/" },
+              { "@type": "ListItem", "position": 2, "name": category.label, "item": `https://africamarket.store/categorie/${category.slug}` },
+              { "@type": "ListItem", "position": 3, "name": subcategory.label, "item": `https://africamarket.store/categorie/${category.slug}/${subcategory.slug}` },
+            ],
+          }}
+        />
+
         {/* Breadcrumb */}
         <motion.div
           initial={{ opacity: 0, x: -15 }}
@@ -200,6 +216,21 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
       transition={{ duration: 0.5 }}
       className="w-full pt-28 sm:pt-32 lg:pt-36"
     >
+      <SEO
+        title={category.label}
+        description={`Collection ${category.label} — Africa Market. Découvrez nos ${category.subcategories.length} sous-catégories d'artisanat africain de luxe.`}
+        canonical={`/categorie/${category.slug}`}
+        image={category.image}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://africamarket.store/" },
+            { "@type": "ListItem", "position": 2, "name": category.label, "item": `https://africamarket.store/categorie/${category.slug}` },
+          ],
+        }}
+      />
+
       {/* Breadcrumb */}
       <motion.div
         initial={{ opacity: 0, x: -15 }}

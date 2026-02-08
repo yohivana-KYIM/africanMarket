@@ -2,6 +2,7 @@ import { useState, useRef, type FC, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import SEO from "../components/SEO";
 import {
   HiOutlineArrowLeft,
   HiOutlinePlus,
@@ -175,6 +176,11 @@ const Admin: FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f6f5f3]">
+      <SEO
+        title="Administration"
+        description="Tableau de bord d'administration Africa Market."
+        noindex
+      />
       {/* ═══ TOP BAR ═══ */}
       <div className="bg-[#19110b] text-white">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">

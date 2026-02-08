@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiOutlineChevronRight, HiOutlineShoppingBag, HiOutlineHeart, HiHeart } from "react-icons/hi";
 import toast from "react-hot-toast";
+import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
 import { fetchProductById } from "../hooks/useProducts";
 import { formatPrice } from "../data/products";
@@ -118,6 +119,41 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
       transition={{ duration: 0.5 }}
       className="w-full pt-28 sm:pt-32 lg:pt-36"
     >
+      <SEO
+        title={product.name}
+        description={product.description || `${product.name} — ${product.category}. Artisanat africain de luxe. Livraison au Cameroun.`}
+        canonical={`/produit/${product.id}`}
+        image={product.image}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": product.name,
+            "image": product.image,
+            "description": product.description,
+            "category": product.category,
+            "offers": {
+              "@type": "Offer",
+              "priceCurrency": "XAF",
+              "price": product.price,
+              "availability": "https://schema.org/InStock",
+              "url": `https://africamarket.store/produit/${product.id}`,
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://africamarket.store/" },
+              ...(product.categorySlug
+                ? [{ "@type": "ListItem", "position": 2, "name": product.category, "item": `https://africamarket.store/categorie/${product.categorySlug}` }]
+                : []),
+              { "@type": "ListItem", "position": product.categorySlug ? 3 : 2, "name": product.name, "item": `https://africamarket.store/produit/${product.id}` },
+            ],
+          },
+        ]}
+      />
+
       {/* Breadcrumb */}
       <motion.div
         initial={{ opacity: 0, x: -15 }}
