@@ -44,7 +44,10 @@ const Admin: FC = () => {
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filterCat, setFilterCat] = useState("all");
+  const [submitting, setSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
 
   const totalProducts = products.length;
   const totalValue = products.reduce((s, p) => s + p.price, 0);
@@ -58,6 +61,14 @@ const Admin: FC = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > MAX_IMAGE_SIZE) {
+      toast.error(
+        `Image trop volumineuse (${(file.size / 1024 / 1024).toFixed(1)} MB). Taille max : 5 MB`,
+        { style: { borderRadius: "0", fontSize: "12px" } }
+      );
+      e.target.value = "";
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (ev) => {
       setForm((prev) => ({ ...prev, image: ev.target?.result as string }));
@@ -103,6 +114,7 @@ const Admin: FC = () => {
       discount: form.discount || null,
     };
 
+    setSubmitting(true);
     try {
       if (editId !== null) {
         await updateProduct(editId, productData);
@@ -116,7 +128,12 @@ const Admin: FC = () => {
       setActiveTab("products");
     } catch (error) {
       console.error(error);
-      toast.error("Erreur lors de l'opération", { style: { borderRadius: "0", fontSize: "12px" } });
+      const msg = error instanceof Error && error.message.includes("413")
+        ? "Image trop volumineuse pour le serveur. Réduisez la taille de l'image."
+        : "Erreur lors de l'opération";
+      toast.error(msg, { style: { borderRadius: "0", fontSize: "12px" } });
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -631,9 +648,19 @@ const Admin: FC = () => {
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
                     type="submit"
-                    className="bg-[#19110b] text-white text-[11px] tracking-[0.15em] uppercase px-8 py-3.5 hover:bg-[#6b4c3b] transition-colors"
+                    disabled={submitting}
+                    className="bg-[#19110b] text-white text-[11px] tracking-[0.15em] uppercase px-8 py-3.5 hover:bg-[#6b4c3b] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
-                    {editId !== null ? "Enregistrer les modifications" : "Ajouter le produit"}
+                    {submitting && (
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                    )}
+                    {submitting
+                      ? (editId !== null ? "Modification..." : "Ajout en cours...")
+                      : (editId !== null ? "Enregistrer les modifications" : "Ajouter le produit")
+                    }
                   </button>
                   <button
                     type="button"
