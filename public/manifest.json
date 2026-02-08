@@ -1,6 +1,6 @@
 {
-  "name": "Africa Market Bag",
-  "short_name": "AMB",
+  "name": "Africa Market",
+  "short_name": "AM",
   "description": "Sacs & Accessoires Africains de Luxe - Livraison Cameroun",
   "start_url": "/",
   "display": "standalone",
@@ -8,16 +8,5 @@
   "theme_color": "#3c2f2f",
   "orientation": "portrait-primary",
   "lang": "fr",
-  "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
-    }
-  ]
+  "icons": []
 }

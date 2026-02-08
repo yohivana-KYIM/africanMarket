@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser, HiOutlineArrowRight } from 'react-icons/hi';
 import toast from 'react-hot-toast';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
 const Register: FC = () => {
@@ -27,6 +28,11 @@ const Register: FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--lv-cream)] flex items-center justify-center px-4 py-20">
+      <SEO
+        title="Créer un compte"
+        description="Créez votre compte Africa Market pour accéder à nos services."
+        noindex
+      />
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

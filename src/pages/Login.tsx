@@ -2,6 +2,7 @@ import { useState, type FC, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { HiOutlineMail, HiOutlineLockClosed, HiOutlineArrowRight } from 'react-icons/hi';
+import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
 
 const Login: FC = () => {
@@ -24,6 +25,11 @@ const Login: FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--lv-cream)] flex items-center justify-center px-4 py-20">
+      <SEO
+        title="Connexion"
+        description="Connectez-vous à votre compte Africa Market."
+        noindex
+      />
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

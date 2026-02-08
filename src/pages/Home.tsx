@@ -2,6 +2,7 @@ import { type FC } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
+import SEO from "../components/SEO";
 import HeroSlider from "../components/HeroSlider";
 import ProductCard from "../components/ProductCard";
 import { categoriesConfig } from "../data/categories";
@@ -53,6 +54,13 @@ const Home: FC<HomeProps> = ({ addToCart, products, toggleWishlist, isInWishlist
 
   return (
     <main className="w-full">
+      <SEO
+        title="Africa Market - Sacs & Accessoires Africains de Luxe"
+        description="Sacs à main wax, bandoulières bogolan, chaussures cuir chèvre, parfums africains. Livraison partout au Cameroun. FCFA uniquement."
+        canonical="/"
+      />
+      <h1 className="sr-only">Africa Market - Sacs & Accessoires Africains de Luxe</h1>
+
       {/* ═══ HERO ═══ */}
       <HeroSlider />
 

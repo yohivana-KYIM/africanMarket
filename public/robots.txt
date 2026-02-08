@@ -1,3 +1,7 @@
 User-agent: *
 Allow: /
-Sitemap: https://africamarketbag.store/sitemap.xml
+Disallow: /login
+Disallow: /register
+Disallow: /admin
+
+Sitemap: https://africamarket.store/sitemap.xml
