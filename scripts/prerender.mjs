@@ -146,7 +146,22 @@ async function prerender() {
       const page = await browser.newPage();
       const url = `http://localhost:${PORT}${route}`;
 
-      await page.goto(url, { waitUntil: "networkidle0", timeout: 30000 });
+      // Block external image/font/media requests to avoid timeouts
+      await page.setRequestInterception(true);
+      page.on("request", (req) => {
+        const type = req.resourceType();
+        const url = req.url();
+        if (
+          (type === "image" || type === "font" || type === "media") &&
+          !url.startsWith(`http://localhost:${PORT}`)
+        ) {
+          req.abort();
+        } else {
+          req.continue();
+        }
+      });
+
+      await page.goto(url, { waitUntil: "domcontentloaded", timeout: 15000 });
 
       // Wait for React to render content inside #root
       await page.waitForFunction(
@@ -157,8 +172,8 @@ async function prerender() {
         { timeout: 10000 }
       );
 
-      // Small extra delay to let any animations/transitions settle
-      await new Promise((r) => setTimeout(r, 500));
+      // Let React finish rendering
+      await new Promise((r) => setTimeout(r, 1000));
 
       const html = await page.content();
       await page.close();
