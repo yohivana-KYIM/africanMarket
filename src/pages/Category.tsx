@@ -284,6 +284,43 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
         </motion.div>
       </div>
 
+      {/* Promo banner */}
+      {category.banner && (
+        <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-10 sm:mb-14">
+          <Link to={category.banner.link}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.7 }}
+              className="relative overflow-hidden aspect-[21/9] sm:aspect-[4/1] group cursor-pointer"
+            >
+              <img
+                src={category.banner.image}
+                alt={category.banner.title}
+                className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+              <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 lg:px-12">
+                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-1.5 sm:mb-2">
+                  Offre spéciale
+                </p>
+                <h3
+                  className="text-lg sm:text-xl lg:text-2xl text-white font-light tracking-wide mb-1 sm:mb-2"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  {category.banner.title}
+                </h3>
+                <p className="text-[11px] sm:text-[12px] text-white/70 font-light">
+                  {category.banner.subtitle}
+                </p>
+                <div className="w-0 group-hover:w-10 h-[2px] bg-[#c5a467] mt-3 transition-all duration-500" />
+              </div>
+            </motion.div>
+          </Link>
+        </section>
+      )}
+
       {/* Editorial content for Achat Programmé */}
       {category.slug === "achat-programme" && (
         <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-14 sm:mb-20">

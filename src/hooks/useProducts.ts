@@ -34,6 +34,7 @@ export const mapProduct = (doc: any): Product => ({
   oldPrice: doc.oldPrice ?? null,
   discount: doc.discount ?? null,
   image: doc.image || "",
+  images: doc.images || [],
   description: doc.description || "",
   featured: doc.featured || false,
 });

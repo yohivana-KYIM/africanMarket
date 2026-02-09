@@ -21,12 +21,14 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
     fetchProductById(id).then((p) => {
       setProduct(p);
+      if (p) setSelectedImage(p.image);
       setLoading(false);
     });
     window.scrollTo(0, 0);
@@ -179,7 +181,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
       {/* Product layout */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pb-14 sm:pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
-          {/* Image */}
+          {/* Image gallery */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -188,7 +190,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
           >
             <div className="relative overflow-hidden bg-[#f6f5f3] aspect-[3/4] group">
               <img
-                src={product.image}
+                src={selectedImage || product.image}
                 alt={product.name}
                 className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
               />
@@ -198,6 +200,32 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
                 </span>
               )}
             </div>
+            {/* Thumbnails */}
+            {(() => {
+              const allImages = [product.image, ...(product.images || [])];
+              return allImages.length > 1 ? (
+                <div className="grid grid-cols-4 gap-2 mt-2">
+                  {allImages.slice(0, 4).map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setSelectedImage(img)}
+                      className={`relative overflow-hidden aspect-square bg-[#f6f5f3] transition-all duration-300 ${
+                        (selectedImage || product.image) === img
+                          ? "ring-2 ring-[#c5a467]"
+                          : "ring-1 ring-[#e0ded9] hover:ring-[#c5a467]/50"
+                      }`}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} - vue ${i + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : null;
+            })()}
           </motion.div>
 
           {/* Info */}

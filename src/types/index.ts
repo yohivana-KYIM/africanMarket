@@ -9,6 +9,7 @@ export interface Product {
   oldPrice: number | null;
   discount: number | null;
   image: string;
+  images: string[];
   description: string;
   featured: boolean;
 }
@@ -35,6 +36,7 @@ export interface CategoryConfig {
   slug: string;
   image: string;
   subcategories: SubcategoryConfig[];
+  banner?: { image: string; link: string; title: string; subtitle: string };
 }
 
 export interface Category {

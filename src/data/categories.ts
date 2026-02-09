@@ -19,6 +19,12 @@ export const categoriesConfig: CategoryConfig[] = [
       { label: "Valise unique", slug: "valise-unique" },
       { label: "Couplet voyage", slug: "couplet-voyage" },
     ],
+    banner: {
+      image: "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=1400&q=80",
+      link: "/categorie/africa-market-bags/sac-a-main",
+      title: "Nouvelle Collection Sacs à Main",
+      subtitle: "Jusqu'à -20% sur la collection printemps",
+    },
   },
   {
     label: "Accessoires",
@@ -44,6 +50,12 @@ export const categoriesConfig: CategoryConfig[] = [
       { label: "Porte-feuille Hommes", slug: "portefeuille-hommes" },
       { label: "Porte-feuille Femmes", slug: "portefeuille-femmes" },
     ],
+    banner: {
+      image: "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=1400&q=80",
+      link: "/categorie/accessoires/chaussures-hommes",
+      title: "Chaussures Artisanales",
+      subtitle: "Le savoir-faire africain à vos pieds",
+    },
   },
   {
     label: "Achat Programmé",
@@ -52,6 +64,12 @@ export const categoriesConfig: CategoryConfig[] = [
     subcategories: [
       { label: "Cotisations sacs", slug: "cotisations-sacs" },
     ],
+    banner: {
+      image: "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1400&q=80",
+      link: "/categorie/achat-programme/cotisations-sacs",
+      title: "Programme de Cotisations",
+      subtitle: "Étalez vos achats et profitez d'avantages exclusifs",
+    },
   },
   {
     label: "Nos Services",
@@ -60,6 +78,12 @@ export const categoriesConfig: CategoryConfig[] = [
     subcategories: [
       { label: "Réparation", slug: "reparation" },
     ],
+    banner: {
+      image: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=1400&q=80",
+      link: "/categorie/services/reparation",
+      title: "Service Réparation Expert",
+      subtitle: "Redonnez vie à vos pièces préférées",
+    },
   },
   {
     label: "Cadeaux Événement",
@@ -69,6 +93,12 @@ export const categoriesConfig: CategoryConfig[] = [
       { label: "Cadeau pour elle", slug: "cadeau-pour-elle" },
       { label: "Cadeau pour lui", slug: "cadeau-pour-lui" },
     ],
+    banner: {
+      image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1400&q=80",
+      link: "/categorie/cadeaux/cadeau-pour-elle",
+      title: "Idées Cadeaux d'Exception",
+      subtitle: "Offrez l'essence de l'Afrique à vos proches",
+    },
   },
 ];
 
