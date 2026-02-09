@@ -1,0 +1,12 @@
+{
+  "name": "Africa Market",
+  "short_name": "AM",
+  "description": "Sacs & Accessoires Africains de Luxe - Livraison Cameroun",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f0",
+  "theme_color": "#3c2f2f",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": []
+}
