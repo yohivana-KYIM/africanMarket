@@ -1,7 +1,7 @@
 import { useState, type FC, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
-import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser, HiOutlineArrowRight } from 'react-icons/hi';
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineUser, HiOutlineArrowRight, HiOutlineEye, HiOutlineEyeOff } from 'react-icons/hi';
 import toast from 'react-hot-toast';
 import SEO from '../components/SEO';
 import { useAuth } from '../context/AuthContext';
@@ -10,6 +10,7 @@ const Register: FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const { register, loading } = useAuth();
   const navigate = useNavigate();
@@ -115,14 +116,21 @@ const Register: FC = () => {
               <div className="relative">
                 <HiOutlineLockClosed size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--lv-grey)]" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="w-full pl-11 pr-4 py-3.5 border border-[var(--lv-border)] text-[13px] text-[var(--lv-black)] font-light tracking-wide bg-transparent outline-none focus:border-[var(--lv-gold)] transition-colors duration-300"
+                  className="w-full pl-11 pr-11 py-3.5 border border-[var(--lv-border)] text-[13px] text-[var(--lv-black)] font-light tracking-wide bg-transparent outline-none focus:border-[var(--lv-gold)] transition-colors duration-300"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--lv-grey)] hover:text-[var(--lv-black)] transition-colors"
+                >
+                  {showPassword ? <HiOutlineEyeOff size={16} /> : <HiOutlineEye size={16} />}
+                </button>
               </div>
               <p className="text-[10px] text-[var(--lv-grey)] mt-2 font-light">
                 Minimum 6 caractères
