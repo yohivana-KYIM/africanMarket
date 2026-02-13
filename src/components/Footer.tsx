@@ -148,9 +148,11 @@ const Footer: FC = () => {
         <div className="max-w-[1100px] mx-auto px-5 sm:px-6 py-8">
           <div className="flex flex-col items-center gap-5">
             {/* Logo */}
-            <span className="text-[13px] sm:text-[14px] font-medium tracking-[0.3em] uppercase text-white/80">
-              Africa Market
-            </span>
+            <img
+              src="/africamarket-logo.jpg"
+              alt="Africa Market"
+              className="h-12 sm:h-14 w-auto object-contain"
+            />
 
             {/* Social icons */}
             <div className="flex items-center gap-6">

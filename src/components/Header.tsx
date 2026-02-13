@@ -169,18 +169,15 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                 whileHover={{ scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20 }}
               >
-                <button onClick={goHome} className="block whitespace-nowrap text-center">
-                  <motion.span
+                <button onClick={goHome} className="block">
+                  <motion.img
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className={`text-[16px] sm:text-[19px] lg:text-[24px] font-semibold tracking-[0.25em] lg:tracking-[0.35em] uppercase transition-colors duration-500 ${
-                      headerSolid ? "text-[#19110b]" : "text-white"
-                    }`}
-                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                  >
-                    Africa Market
-                  </motion.span>
+                    src="/africamarket-logo.jpg"
+                    alt="Africa Market"
+                    className="h-10 sm:h-12 lg:h-14 w-auto object-contain"
+                  />
                 </button>
               </motion.div>
 

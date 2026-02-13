@@ -2,7 +2,7 @@ import { type FC, useEffect } from "react";
 
 const SITE_URL = "https://africamarket.store";
 const SITE_NAME = "Africa Market";
-const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1200&q=80";
+const DEFAULT_IMAGE = "https://africamarket.store/africamarket-logo.jpg";
 
 interface SEOProps {
   title: string;
