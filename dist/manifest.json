@@ -8,5 +8,12 @@
   "theme_color": "#3c2f2f",
   "orientation": "portrait-primary",
   "lang": "fr",
-  "icons": []
+  "icons": [
+    {
+      "src": "/africamarket-logo.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
 }
