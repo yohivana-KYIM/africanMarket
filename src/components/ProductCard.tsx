@@ -51,7 +51,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishl
           className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all duration-700" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700 pointer-events-none" />
 
         {/* Wishlist heart */}
         {onToggleWishlist && (
