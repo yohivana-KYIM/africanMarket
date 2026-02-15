@@ -161,14 +161,26 @@ export const useCameraSearch = () => {
     setState("loading-model");
 
     try {
+      const withTimeout = <T,>(promise: Promise<T>, ms: number, label: string): Promise<T> =>
+        Promise.race([
+          promise,
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error(`${label} : delai depasse (${ms / 1000}s)`)), ms)
+          ),
+        ]);
+
       // Lazy load TF.js and MobileNet in parallel with camera access
-      const [mobilenetModule, stream] = await Promise.all([
+      const [, stream] = await Promise.all([
         (async () => {
           if (modelRef.current) return null;
-          const tf = await import("@tensorflow/tfjs");
-          await tf.ready();
-          const mn = await import("@tensorflow-models/mobilenet");
-          const model = await mn.load({ version: 2, alpha: 1.0 });
+          const tf = await withTimeout(import("@tensorflow/tfjs"), 15000, "Chargement TensorFlow");
+          await withTimeout(tf.ready(), 10000, "Initialisation TensorFlow");
+          const mn = await withTimeout(import("@tensorflow-models/mobilenet"), 10000, "Chargement MobileNet");
+          const model = await withTimeout(
+            mn.load({ version: 2, alpha: 0.5 }),
+            20000,
+            "Telechargement du modele"
+          );
           modelRef.current = model;
           return null;
         })(),
