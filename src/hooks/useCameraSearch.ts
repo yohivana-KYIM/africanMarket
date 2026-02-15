@@ -193,12 +193,7 @@ export const useCameraSearch = () => {
       ]);
 
       streamRef.current = stream as MediaStream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream as MediaStream;
-        await videoRef.current.play();
-      }
-
+      // Stream will be assigned to video element via the useEffect when state becomes "viewfinder"
       setState("viewfinder");
     } catch (err: any) {
       stopStream();
@@ -282,12 +277,7 @@ export const useCameraSearch = () => {
       });
 
       streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play();
-      }
-
+      // Stream will be assigned to video element via the useEffect when state becomes "viewfinder"
       setState("viewfinder");
     } catch {
       setState("error");
@@ -304,6 +294,17 @@ export const useCameraSearch = () => {
     setActiveSearchTerm("");
     setCapturedImage("");
   }, [stopStream]);
+
+  // Assign stream to video element once it's rendered in viewfinder state
+  useEffect(() => {
+    if (state === "viewfinder" && videoRef.current && streamRef.current) {
+      const video = videoRef.current;
+      if (!video.srcObject) {
+        video.srcObject = streamRef.current;
+        video.play().catch(() => {});
+      }
+    }
+  }, [state]);
 
   // Cleanup on unmount
   useEffect(() => {
