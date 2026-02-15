@@ -40,13 +40,12 @@ const Login: FC = () => {
         {/* Header */}
         <div className="text-center mb-10">
           <Link to="/">
-            <motion.h1
-              whileHover={{ scale: 1.02 }}
-              className="text-[22px] font-semibold tracking-[0.35em] uppercase text-[var(--lv-black)] mb-2"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-            >
-              Africa Market
-            </motion.h1>
+            <motion.img
+              whileHover={{ scale: 1.04 }}
+              src="/africamarket-logo.jpg"
+              alt="Africa Market"
+              className="h-16 sm:h-20 w-auto object-contain mx-auto mb-2"
+            />
           </Link>
           <div className="w-12 h-[2px] bg-[var(--lv-gold)] mx-auto mt-4 mb-6" />
           <p className="text-[11px] tracking-[0.2em] uppercase text-[var(--lv-grey)] font-light">
