@@ -23,21 +23,30 @@ const authHeaders = (): Record<string, string> => {
   return headers;
 };
 
-export const mapProduct = (doc: any): Product => ({
-  id: doc._id,
-  name: doc.name,
-  category: doc.category || "",
-  categorySlug: doc.categorySlug || "",
-  subcategory: doc.subcategory || "",
-  subcategorySlug: doc.subcategorySlug || "",
-  price: doc.price,
-  oldPrice: doc.oldPrice ?? null,
-  discount: doc.discount ?? null,
-  image: doc.image || "",
-  images: doc.images || [],
-  description: doc.description || "",
-  featured: doc.featured || false,
-});
+export const mapProduct = (doc: any): Product => {
+  const images: string[] =
+    Array.isArray(doc.images) && doc.images.length > 0
+      ? doc.images
+      : doc.image
+        ? [doc.image]
+        : [];
+
+  return {
+    id: doc._id,
+    name: doc.name,
+    category: doc.category || "",
+    categorySlug: doc.categorySlug || "",
+    subcategory: doc.subcategory || "",
+    subcategorySlug: doc.subcategorySlug || "",
+    price: doc.price,
+    oldPrice: doc.oldPrice ?? null,
+    discount: doc.discount ?? null,
+    image: images[0] || "",
+    images,
+    description: doc.description || "",
+    featured: doc.featured || false,
+  };
+};
 
 export const fetchProductById = async (id: string): Promise<Product | null> => {
   try {
@@ -107,7 +116,10 @@ export const useProducts = () => {
       headers: authHeaders(),
       body: JSON.stringify(updates),
     });
-    if (!res.ok) throw new Error("Erreur lors de la mise à jour");
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.message || `Erreur ${res.status} lors de la mise à jour`);
+    }
     const updated = await res.json();
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? mapProduct(updated) : p))

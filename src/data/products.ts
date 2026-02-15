@@ -20,6 +20,7 @@ export const products: Product[] = [
     ],
     description: "Sac bandoulière en tissu wax authentique avec finitions cuir premium. Doublure intérieure soie.",
     featured: true,
+
   },
   {
     id: "default-2",
@@ -39,6 +40,7 @@ export const products: Product[] = [
     ],
     description: "Sac à main en bogolan malien fait main. Cuir tanné végétal et teintures naturelles.",
     featured: true,
+
   },
   {
     id: "default-3",
@@ -58,6 +60,7 @@ export const products: Product[] = [
     ],
     description: "Pochette de soirée en cuir grainé africain. Fermoir magnétique doré. Chaîne amovible.",
     featured: true,
+
   },
   {
     id: "default-4",
@@ -77,6 +80,7 @@ export const products: Product[] = [
     ],
     description: "Sac à dos en tissu kente ghanéen tissé main. Compartiment laptop 15 pouces. Cuir pleine fleur.",
     featured: true,
+
   },
   {
     id: "default-5",
@@ -96,6 +100,7 @@ export const products: Product[] = [
     ],
     description: "Mini sac sport en toile wax imperméable. Parfait pour le quotidien. Léger et résistant.",
     featured: false,
+
   },
   {
     id: "default-6",
@@ -115,6 +120,7 @@ export const products: Product[] = [
     ],
     description: "Sac de voyage XL en cuir et wax. Grande capacité 45L. Bandoulière ajustable.",
     featured: false,
+
   },
   // ACCESSOIRES
   {
@@ -135,6 +141,7 @@ export const products: Product[] = [
     ],
     description: "Sandales artisanales en cuir de chèvre tanné naturel. Semelle confort. Fabriquées au Cameroun.",
     featured: true,
+
   },
   {
     id: "default-8",
@@ -154,6 +161,7 @@ export const products: Product[] = [
     ],
     description: "Baskets urbaines avec empiècements wax africain. Semelle en caoutchouc naturel. Unisexe.",
     featured: true,
+
   },
   {
     id: "default-9",
@@ -173,6 +181,7 @@ export const products: Product[] = [
     ],
     description: "Escarpins en cuir véritable avec détails wax. Talon 8cm confort. Intérieur cuir.",
     featured: true,
+
   },
   // CADEAUX ÉVÉNEMENT
   {
@@ -193,6 +202,7 @@ export const products: Product[] = [
     ],
     description: "Eau de parfum Oud africain. Notes de bois précieux, ambre et musc. Longue tenue 12h.",
     featured: true,
+
   },
   {
     id: "default-11",
@@ -212,6 +222,7 @@ export const products: Product[] = [
     ],
     description: "Parfum floral Ylang-Ylang de Madagascar. Notes de jasmin, vanille et bois de santal.",
     featured: true,
+
   },
   {
     id: "default-12",
@@ -231,6 +242,7 @@ export const products: Product[] = [
     ],
     description: "Eau de parfum boisé-épicé. Notes de baobab, poivre de Penja et cardamome. Flacon artisanal.",
     featured: true,
+
   },
 ];
 

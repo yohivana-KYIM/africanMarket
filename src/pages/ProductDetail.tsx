@@ -1,7 +1,7 @@
 import { type FC, useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiOutlineChevronRight, HiOutlineShoppingBag, HiOutlineHeart, HiHeart } from "react-icons/hi";
+import { HiOutlineChevronRight, HiOutlineChevronLeft, HiOutlineShoppingBag, HiOutlineHeart, HiHeart } from "react-icons/hi";
 import toast from "react-hot-toast";
 import SEO from "../components/SEO";
 import ProductCard from "../components/ProductCard";
@@ -21,14 +21,17 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
   const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string>("");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
+  }, [id]);
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
     fetchProductById(id).then((p) => {
       setProduct(p);
-      if (p) setSelectedImage(p.image);
       setLoading(false);
     });
     window.scrollTo(0, 0);
@@ -113,6 +116,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
   }
 
   const inWishlist = isInWishlist?.(product.id) ?? false;
+  const productImages = product.images.length > 0 ? product.images : product.image ? [product.image] : [];
 
   return (
     <motion.main
@@ -181,51 +185,65 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
       {/* Product layout */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 pb-14 sm:pb-20">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
-          {/* Image gallery */}
+          {/* Image Gallery */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
-            className="md:sticky md:top-32 md:self-start"
+            className="md:sticky md:top-32 md:self-start space-y-3"
           >
             <div className="relative overflow-hidden bg-[#f6f5f3] aspect-[3/4] group">
-              <img
-                src={selectedImage || product.image}
-                alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
-              />
+              <AnimatePresence mode="wait">
+                <motion.img
+                  key={activeImageIndex}
+                  src={productImages[activeImageIndex] || product.image}
+                  alt={`${product.name} - Photo ${activeImageIndex + 1}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
+                />
+              </AnimatePresence>
               {product.discount && (
                 <span className="absolute top-4 left-4 text-[10px] tracking-[0.15em] uppercase font-medium text-[#19110b] bg-white/90 backdrop-blur-sm px-3 py-1.5">
                   -{product.discount}%
                 </span>
               )}
+              {productImages.length > 1 && (
+                <>
+                  <button
+                    onClick={() => setActiveImageIndex((prev) => prev === 0 ? productImages.length - 1 : prev - 1)}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur-sm flex items-center justify-center text-[#19110b] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+                  >
+                    <HiOutlineChevronLeft size={18} />
+                  </button>
+                  <button
+                    onClick={() => setActiveImageIndex((prev) => prev === productImages.length - 1 ? 0 : prev + 1)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/80 backdrop-blur-sm flex items-center justify-center text-[#19110b] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white"
+                  >
+                    <HiOutlineChevronRight size={18} />
+                  </button>
+                </>
+              )}
             </div>
-            {/* Thumbnails */}
-            {(() => {
-              const allImages = [product.image, ...(product.images || [])];
-              return allImages.length > 1 ? (
-                <div className="grid grid-cols-4 gap-2 mt-2">
-                  {allImages.slice(0, 4).map((img, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setSelectedImage(img)}
-                      className={`relative overflow-hidden aspect-square bg-[#f6f5f3] transition-all duration-300 ${
-                        (selectedImage || product.image) === img
-                          ? "ring-2 ring-[#c5a467]"
-                          : "ring-1 ring-[#e0ded9] hover:ring-[#c5a467]/50"
-                      }`}
-                    >
-                      <img
-                        src={img}
-                        alt={`${product.name} - vue ${i + 1}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
-                </div>
-              ) : null;
-            })()}
+            {productImages.length > 1 && (
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                {productImages.map((img, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveImageIndex(index)}
+                    className={`flex-shrink-0 w-16 h-20 sm:w-[72px] sm:h-[90px] overflow-hidden transition-all duration-300 ${
+                      index === activeImageIndex
+                        ? "ring-2 ring-[#c5a467] opacity-100"
+                        : "ring-1 ring-[#e8e8e8] opacity-60 hover:opacity-100"
+                    }`}
+                  >
+                    <img src={img} alt={`${product.name} - Miniature ${index + 1}`} className="w-full h-full object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Info */}

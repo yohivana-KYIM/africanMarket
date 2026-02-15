@@ -15,6 +15,7 @@ import {
   HiOutlineTrendingUp,
   HiOutlineX,
   HiOutlineRefresh,
+  HiOutlineEye,
 } from "react-icons/hi";
 import type { Product } from "../types";
 import { useProducts } from "../hooks/useProducts";
@@ -22,6 +23,8 @@ import { formatPrice } from "../data/products";
 import { categoriesConfig } from "../data/categories";
 
 type Tab = "overview" | "products" | "add" | "edit";
+
+const MAX_IMAGES = 8;
 
 const emptyForm = {
   name: "",
@@ -32,20 +35,22 @@ const emptyForm = {
   price: 0,
   oldPrice: 0,
   discount: 0,
-  image: "",
+  images: [] as string[],
   description: "",
   featured: true,
 };
 
 const Admin: FC = () => {
   const navigate = useNavigate();
-  const { products, addProduct, updateProduct, deleteProduct, resetToDefaults } = useProducts();
+  const { products, addProduct, updateProduct, deleteProduct, resetToDefaults, fetchProducts } = useProducts();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [form, setForm] = useState(emptyForm);
   const [editId, setEditId] = useState<string | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [filterCat, setFilterCat] = useState("all");
   const [submitting, setSubmitting] = useState(false);
+  const [imageUrl, setImageUrl] = useState("");
+  const [viewProduct, setViewProduct] = useState<Product | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -55,26 +60,64 @@ const Admin: FC = () => {
   const totalCategories = new Set(products.map((p) => p.categorySlug)).size;
   const featuredCount = products.filter((p) => p.featured).length;
 
-  const filteredProducts = filterCat === "all"
+  const filteredProducts = (filterCat === "all"
     ? products
-    : products.filter((p) => p.categorySlug === filterCat);
+    : products.filter((p) => p.categorySlug === filterCat)
+  ).slice().reverse();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > MAX_IMAGE_SIZE) {
-      toast.error(
-        `Image trop volumineuse (${(file.size / 1024 / 1024).toFixed(1)} MB). Taille max : 5 MB`,
-        { style: { borderRadius: "0", fontSize: "12px" } }
-      );
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const remaining = MAX_IMAGES - form.images.length;
+    if (remaining <= 0) {
+      toast.error(`Maximum ${MAX_IMAGES} images par produit`, { style: { borderRadius: "0", fontSize: "12px" } });
       e.target.value = "";
       return;
     }
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      setForm((prev) => ({ ...prev, image: ev.target?.result as string }));
-    };
-    reader.readAsDataURL(file);
+
+    files.slice(0, remaining).forEach((file) => {
+      if (file.size > MAX_IMAGE_SIZE) {
+        toast.error(
+          `"${file.name}" trop volumineuse (${(file.size / 1024 / 1024).toFixed(1)} MB). Max : 5 MB`,
+          { style: { borderRadius: "0", fontSize: "12px" } }
+        );
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        setForm((prev) => ({
+          ...prev,
+          images: prev.images.length < MAX_IMAGES ? [...prev.images, ev.target?.result as string] : prev.images,
+        }));
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== index) }));
+  };
+
+  const setMainImage = (index: number) => {
+    if (index === 0) return;
+    setForm((prev) => {
+      const newImages = [...prev.images];
+      const [selected] = newImages.splice(index, 1);
+      newImages.unshift(selected);
+      return { ...prev, images: newImages };
+    });
+  };
+
+  const addImageUrl = () => {
+    if (!imageUrl.trim()) return;
+    if (form.images.length >= MAX_IMAGES) {
+      toast.error(`Maximum ${MAX_IMAGES} images par produit`, { style: { borderRadius: "0", fontSize: "12px" } });
+      return;
+    }
+    setForm((prev) => ({ ...prev, images: [...prev.images, imageUrl.trim()] }));
+    setImageUrl("");
   };
 
   const handleCategoryChange = (catSlug: string) => {
@@ -107,10 +150,11 @@ const Admin: FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.image || form.price <= 0) return;
+    if (!form.name || form.images.length === 0 || form.price <= 0) return;
 
     const productData = {
       ...form,
+      image: form.images[0],
       oldPrice: form.oldPrice || null,
       discount: form.discount || null,
     };
@@ -127,11 +171,13 @@ const Admin: FC = () => {
       }
       setForm(emptyForm);
       setActiveTab("products");
+      fetchProducts();
     } catch (error) {
       console.error(error);
-      const msg = error instanceof Error && error.message.includes("413")
-        ? "Image trop volumineuse pour le serveur. Réduisez la taille de l'image."
-        : "Erreur lors de l'opération";
+      const errMsg = error instanceof Error ? error.message : "";
+      const msg = errMsg.includes("413")
+        ? "Images trop volumineuses pour le serveur. Réduisez la taille."
+        : errMsg || "Erreur lors de l'opération";
       toast.error(msg, { style: { borderRadius: "0", fontSize: "12px" } });
     } finally {
       setSubmitting(false);
@@ -148,7 +194,7 @@ const Admin: FC = () => {
       price: product.price,
       oldPrice: product.oldPrice || 0,
       discount: product.discount || 0,
-      image: product.image,
+      images: product.images.length > 0 ? [...product.images] : product.image ? [product.image] : [],
       description: product.description,
       featured: product.featured,
     });
@@ -374,6 +420,7 @@ const Admin: FC = () => {
                   <thead>
                     <tr className="border-b border-[#e8e8e8]">
                       <th className="text-left text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium px-5 py-3">Produit</th>
+                      <th className="text-left text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium px-5 py-3">Photos</th>
                       <th className="text-left text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium px-5 py-3">Catégorie</th>
                       <th className="text-left text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium px-5 py-3">Sous-cat.</th>
                       <th className="text-left text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium px-5 py-3">Prix</th>
@@ -386,13 +433,43 @@ const Admin: FC = () => {
                       <tr key={product.id} className="border-b border-[#f0f0f0] hover:bg-[#faf9f7] transition-colors">
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="w-12 h-14 bg-[#f6f5f3] overflow-hidden shrink-0">
+                            <div className="relative w-12 h-14 bg-[#f6f5f3] overflow-hidden shrink-0 group/img">
                               <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                              {product.images.length > 1 && (
+                                <span className="absolute bottom-0.5 right-0.5 text-[8px] bg-[#19110b]/80 text-white px-1 py-px leading-tight">
+                                  +{product.images.length - 1}
+                                </span>
+                              )}
+                              {/* Popup preview on hover */}
+                              {product.images.length > 1 && (
+                                <div className="hidden group-hover/img:flex absolute left-14 top-0 z-50 bg-white border border-[#e8e8e8] shadow-lg p-2 gap-1.5">
+                                  {product.images.map((img, idx) => (
+                                    <div key={idx} className={`w-14 h-[72px] overflow-hidden shrink-0 ${idx === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"}`}>
+                                      <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
                             </div>
                             <div className="min-w-0">
                               <p className="text-[13px] text-[#19110b] font-normal truncate">{product.name}</p>
                               <p className="text-[11px] text-[#757575] font-light truncate">{product.description.slice(0, 50)}...</p>
                             </div>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-1">
+                            {(product.images.length > 0 ? product.images : [product.image]).slice(0, 4).map((img, idx) => (
+                              <div key={idx} className={`w-8 h-10 overflow-hidden shrink-0 ${idx === 0 ? "ring-1 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"}`}>
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                              </div>
+                            ))}
+                            {product.images.length > 4 && (
+                              <span className="text-[10px] text-[#757575] ml-0.5">+{product.images.length - 4}</span>
+                            )}
+                            {product.images.length <= 1 && (
+                              <span className="text-[9px] text-[#c0c0c0] ml-1">1 photo</span>
+                            )}
                           </div>
                         </td>
                         <td className="px-5 py-3">
@@ -412,7 +489,14 @@ const Admin: FC = () => {
                           )}
                         </td>
                         <td className="px-5 py-3">
-                          <div className="flex items-center justify-end gap-2">
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => setViewProduct(product)}
+                              className="p-2 text-[#757575] hover:text-[#c5a467] hover:bg-[#f0f0f0] transition-colors"
+                              title="Voir"
+                            >
+                              <HiOutlineEye size={15} />
+                            </button>
                             <button
                               onClick={() => startEdit(product)}
                               className="p-2 text-[#757575] hover:text-[#19110b] hover:bg-[#f0f0f0] transition-colors"
@@ -438,8 +522,13 @@ const Admin: FC = () => {
               <div className="md:hidden divide-y divide-[#f0f0f0]">
                 {filteredProducts.map((product) => (
                   <div key={product.id} className="flex items-center gap-3 p-4">
-                    <div className="w-16 h-20 bg-[#f6f5f3] overflow-hidden shrink-0">
+                    <div className="relative w-16 h-20 bg-[#f6f5f3] overflow-hidden shrink-0">
                       <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      {product.images.length > 1 && (
+                        <span className="absolute bottom-0.5 right-0.5 text-[8px] bg-[#19110b]/80 text-white px-1 py-px leading-tight">
+                          {product.images.length} photos
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[12px] text-[#19110b] font-medium truncate">{product.name}</p>
@@ -448,6 +537,9 @@ const Admin: FC = () => {
                       <p className="text-[12px] text-[#19110b] font-medium">{formatPrice(product.price)}</p>
                     </div>
                     <div className="flex flex-col gap-1 shrink-0">
+                      <button onClick={() => setViewProduct(product)} className="p-2 text-[#757575] hover:text-[#c5a467]">
+                        <HiOutlineEye size={16} />
+                      </button>
                       <button onClick={() => startEdit(product)} className="p-2 text-[#757575] hover:text-[#19110b]">
                         <HiOutlinePencil size={16} />
                       </button>
@@ -479,55 +571,84 @@ const Admin: FC = () => {
               <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                 {/* Image upload */}
                 <div className="bg-white border border-[#e8e8e8] p-4 sm:p-6">
-                  <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium mb-3 sm:mb-4">
-                    Photo du produit
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6">
-                    {form.image ? (
-                      <div className="relative w-32 sm:w-40 aspect-[3/4] bg-[#f6f5f3] overflow-hidden shrink-0">
-                        <img src={form.image} alt="Preview" className="w-full h-full object-cover" />
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium">
+                      Photos du produit ({form.images.length}/{MAX_IMAGES})
+                    </p>
+                    {form.images.length > 1 && (
+                      <p className="text-[9px] text-[#757575] font-light">
+                        Cliquez pour definir comme principale
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Image Grid */}
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 mb-4">
+                    {form.images.map((img, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setMainImage(index)}
+                        className={`relative aspect-[3/4] bg-[#f6f5f3] overflow-hidden cursor-pointer group ${
+                          index === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8] hover:ring-[#19110b]"
+                        }`}
+                      >
+                        <img src={img} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                        {index === 0 && (
+                          <span className="absolute top-1.5 left-1.5 text-[8px] tracking-[0.1em] uppercase bg-[#c5a467] text-white px-1.5 py-0.5">
+                            Principale
+                          </span>
+                        )}
                         <button
                           type="button"
-                          onClick={() => setForm((prev) => ({ ...prev, image: "" }))}
-                          className="absolute top-2 right-2 w-6 h-6 bg-white/90 flex items-center justify-center"
+                          onClick={(e) => { e.stopPropagation(); removeImage(index); }}
+                          className="absolute top-1.5 right-1.5 w-5 h-5 bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                         >
-                          <HiOutlineX size={12} />
+                          <HiOutlineX size={10} />
                         </button>
                       </div>
-                    ) : (
+                    ))}
+                    {form.images.length < MAX_IMAGES && (
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="w-32 sm:w-40 aspect-[3/4] border-2 border-dashed border-[#e0e0e0] flex flex-col items-center justify-center gap-2 hover:border-[#19110b] transition-colors shrink-0"
+                        className="aspect-[3/4] border-2 border-dashed border-[#e0e0e0] flex flex-col items-center justify-center gap-1.5 hover:border-[#19110b] transition-colors"
                       >
-                        <HiOutlinePhotograph size={28} className="text-[#c0c0c0]" />
-                        <span className="text-[10px] tracking-[0.1em] uppercase text-[#757575]">Ajouter</span>
+                        <HiOutlinePlus size={20} className="text-[#c0c0c0]" />
+                        <span className="text-[9px] tracking-[0.1em] uppercase text-[#757575]">Ajouter</span>
                       </button>
                     )}
-                    <div className="flex-1 w-full">
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="hidden"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="text-[11px] tracking-[0.1em] uppercase text-[#19110b] border border-[#19110b] px-4 py-2.5 hover:bg-[#19110b] hover:text-white transition-colors mb-3"
-                      >
-                        Importer une photo
-                      </button>
-                      <p className="text-[11px] text-[#757575] font-light mb-2">Ou coller un lien URL :</p>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+
+                  {/* URL input */}
+                  <div className="flex gap-2 items-end">
+                    <div className="flex-1">
+                      <p className="text-[11px] text-[#757575] font-light mb-1.5">Ou ajouter via URL :</p>
                       <input
                         type="text"
-                        value={form.image}
-                        onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))}
+                        value={imageUrl}
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addImageUrl(); } }}
                         placeholder="https://..."
                         className="w-full border-b border-[#e8e8e8] py-2 text-[13px] text-[#19110b] font-light bg-transparent outline-none focus:border-[#19110b] transition-colors"
                       />
                     </div>
+                    <button
+                      type="button"
+                      onClick={addImageUrl}
+                      disabled={!imageUrl.trim()}
+                      className="text-[10px] tracking-[0.1em] uppercase text-[#19110b] border border-[#19110b] px-3 py-2 hover:bg-[#19110b] hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed mb-[1px]"
+                    >
+                      Ajouter
+                    </button>
                   </div>
                 </div>
 
@@ -706,6 +827,120 @@ const Admin: FC = () => {
               >
                 Annuler
               </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* ═══ VIEW PRODUCT MODAL ═══ */}
+      {viewProduct && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setViewProduct(null)} />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="relative bg-white max-w-[700px] w-full max-h-[90vh] overflow-y-auto"
+          >
+            {/* Header */}
+            <div className="sticky top-0 bg-white border-b border-[#e8e8e8] px-5 sm:px-6 py-3 flex items-center justify-between z-10">
+              <h3
+                className="text-[14px] sm:text-[16px] text-[#19110b] font-light tracking-wide truncate pr-4"
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+              >
+                {viewProduct.name}
+              </h3>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => { startEdit(viewProduct); setViewProduct(null); }}
+                  className="text-[10px] tracking-[0.1em] uppercase text-[#19110b] border border-[#19110b] px-3 py-1.5 hover:bg-[#19110b] hover:text-white transition-colors flex items-center gap-1.5"
+                >
+                  <HiOutlinePencil size={12} /> Modifier
+                </button>
+                <button
+                  onClick={() => setViewProduct(null)}
+                  className="p-1.5 text-[#757575] hover:text-[#19110b] transition-colors"
+                >
+                  <HiOutlineX size={18} />
+                </button>
+              </div>
+            </div>
+
+            {/* Images */}
+            <div className="p-5 sm:p-6">
+              <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium mb-3">
+                Photos ({viewProduct.images.length})
+              </p>
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 mb-6">
+                {(viewProduct.images.length > 0 ? viewProduct.images : viewProduct.image ? [viewProduct.image] : []).map((img, idx) => (
+                  <div
+                    key={idx}
+                    className={`relative aspect-[3/4] bg-[#f6f5f3] overflow-hidden ${
+                      idx === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"
+                    }`}
+                  >
+                    <img src={img} alt={`${viewProduct.name} - ${idx + 1}`} className="w-full h-full object-cover" />
+                    {idx === 0 && (
+                      <span className="absolute top-1.5 left-1.5 text-[8px] tracking-[0.1em] uppercase bg-[#c5a467] text-white px-1.5 py-0.5">
+                        Principale
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Details */}
+              <div className="space-y-3 border-t border-[#e8e8e8] pt-5">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Catégorie</p>
+                    <p className="text-[13px] text-[#19110b]">{viewProduct.category}</p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Sous-catégorie</p>
+                    <p className="text-[13px] text-[#19110b]">{viewProduct.subcategory || "—"}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Prix</p>
+                    <p className="text-[14px] text-[#19110b] font-medium">{formatPrice(viewProduct.price)}</p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Ancien prix</p>
+                    <p className="text-[13px] text-[#757575]">{viewProduct.oldPrice ? formatPrice(viewProduct.oldPrice) : "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Réduction</p>
+                    <p className="text-[13px] text-[#19110b]">{viewProduct.discount ? `-${viewProduct.discount}%` : "—"}</p>
+                  </div>
+                </div>
+                {viewProduct.description && (
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Description</p>
+                    <p className="text-[13px] text-[#757575] font-light leading-relaxed">{viewProduct.description}</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">En vedette</p>
+                  <p className="text-[13px] text-[#19110b]">{viewProduct.featured ? "Oui" : "Non"}</p>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 mt-6 pt-5 border-t border-[#e8e8e8]">
+                <button
+                  onClick={() => { startEdit(viewProduct); setViewProduct(null); }}
+                  className="flex-1 bg-[#19110b] text-white text-[10px] tracking-[0.15em] uppercase py-3 flex items-center justify-center gap-2 hover:bg-[#2a1f14] transition-colors"
+                >
+                  <HiOutlinePencil size={14} /> Modifier
+                </button>
+                <button
+                  onClick={() => navigate(`/product/${viewProduct.id}`)}
+                  className="flex-1 border border-[#19110b] text-[#19110b] text-[10px] tracking-[0.15em] uppercase py-3 flex items-center justify-center gap-2 hover:bg-[#19110b] hover:text-white transition-colors"
+                >
+                  <HiOutlineEye size={14} /> Voir sur le site
+                </button>
+              </div>
             </div>
           </motion.div>
         </div>
