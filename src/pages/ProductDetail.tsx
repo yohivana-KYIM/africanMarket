@@ -23,11 +23,23 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     setActiveImageIndex(0);
     setSelectedSize(null);
   }, [id]);
+
+  // Auto-slide images every 4 seconds
+  useEffect(() => {
+    if (!product || isPaused) return;
+    const images = product.images.length > 0 ? product.images : product.image ? [product.image] : [];
+    if (images.length <= 1) return;
+    const interval = setInterval(() => {
+      setActiveImageIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [product, isPaused]);
 
   useEffect(() => {
     if (!id) return;
@@ -205,7 +217,11 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
             transition={{ duration: 0.7 }}
             className="md:sticky md:top-32 md:self-start space-y-3"
           >
-            <div className="relative overflow-hidden bg-[#f6f5f3] aspect-[3/4] group">
+            <div
+              className="relative overflow-hidden bg-[#f6f5f3] aspect-[3/4] group"
+              onMouseEnter={() => setIsPaused(true)}
+              onMouseLeave={() => setIsPaused(false)}
+            >
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activeImageIndex}
@@ -237,6 +253,18 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
                   >
                     <HiOutlineChevronRight size={18} />
                   </button>
+                  {/* Progress dots */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    {productImages.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveImageIndex(i)}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          i === activeImageIndex ? "w-6 bg-[#c5a467]" : "w-1.5 bg-white/60"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </>
               )}
             </div>
