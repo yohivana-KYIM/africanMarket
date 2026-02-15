@@ -431,21 +431,40 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
 
           {/* ═══ Marquee Section : Voyage ═══ */}
           <section className="mb-14 sm:mb-20">
+            {/* Section announcement image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 1.02 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="relative overflow-hidden aspect-[21/9] sm:aspect-[3/1] mb-8 sm:mb-12"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1400&q=80"
+                alt="Service Voyage"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 flex items-center justify-center text-center px-4">
+                <div>
+                  <p className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#c5a467] font-medium mb-2">
+                    Service
+                  </p>
+                  <h2
+                    className="text-2xl sm:text-3xl lg:text-4xl text-white font-light tracking-wide"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    Voyage
+                  </h2>
+                  <div className="w-10 h-[2px] bg-[#c5a467] mx-auto mt-3" />
+                </div>
+              </div>
+            </motion.div>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-6 sm:mb-8 text-center">
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp}>
-                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-2">
-                  Service
-                </p>
-                <h2
-                  className="text-xl sm:text-2xl text-[#19110b] font-light tracking-wide mb-2"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Voyage
-                </h2>
-                <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
-                  Voyagez avec élégance. Découvrez nos bagages, trousses et accessoires conçus pour sublimer chaque déplacement.
-                </p>
-              </motion.div>
+              <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
+                Voyagez avec élégance. Découvrez nos bagages, trousses et accessoires conçus pour sublimer chaque déplacement.
+              </p>
             </div>
             <ImageMarquee
               direction="left"
@@ -463,21 +482,40 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
 
           {/* ═══ Marquee Section : Achat Programmé ═══ */}
           <section className="mb-14 sm:mb-20">
+            {/* Section announcement image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 1.02 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="relative overflow-hidden aspect-[21/9] sm:aspect-[3/1] mb-8 sm:mb-12"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1400&q=80"
+                alt="Achat Programmé"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 flex items-center justify-center text-center px-4">
+                <div>
+                  <p className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#c5a467] font-medium mb-2">
+                    Service
+                  </p>
+                  <h2
+                    className="text-2xl sm:text-3xl lg:text-4xl text-white font-light tracking-wide"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    Achat Programmé
+                  </h2>
+                  <div className="w-10 h-[2px] bg-[#c5a467] mx-auto mt-3" />
+                </div>
+              </div>
+            </motion.div>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-6 sm:mb-8 text-center">
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp}>
-                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-2">
-                  Service
-                </p>
-                <h2
-                  className="text-xl sm:text-2xl text-[#19110b] font-light tracking-wide mb-2"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Achat Programmé
-                </h2>
-                <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
-                  Acquérez le sac de vos rêves grâce à notre programme de cotisations. Étalez votre investissement en toute sérénité.
-                </p>
-              </motion.div>
+              <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
+                Acquérez le sac de vos rêves grâce à notre programme de cotisations. Étalez votre investissement en toute sérénité.
+              </p>
             </div>
             <ImageMarquee
               direction="right"
@@ -495,21 +533,40 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
 
           {/* ═══ Marquee Section : Cadeau Personnalisé / Événements ═══ */}
           <section className="mb-14 sm:mb-20">
+            {/* Section announcement image */}
+            <motion.div
+              initial={{ opacity: 0, scale: 1.02 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1 }}
+              className="relative overflow-hidden aspect-[21/9] sm:aspect-[3/1] mb-8 sm:mb-12"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1549465220-1a8b9238f760?w=1400&q=80"
+                alt="Cadeau Personnalisé & Événements"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <div className="absolute inset-0 flex items-center justify-center text-center px-4">
+                <div>
+                  <p className="text-[9px] sm:text-[10px] tracking-[0.3em] uppercase text-[#c5a467] font-medium mb-2">
+                    Service
+                  </p>
+                  <h2
+                    className="text-2xl sm:text-3xl lg:text-4xl text-white font-light tracking-wide"
+                    style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                  >
+                    Cadeau Personnalisé & Événements
+                  </h2>
+                  <div className="w-10 h-[2px] bg-[#c5a467] mx-auto mt-3" />
+                </div>
+              </div>
+            </motion.div>
             <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-6 sm:mb-8 text-center">
-              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp}>
-                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-2">
-                  Service
-                </p>
-                <h2
-                  className="text-xl sm:text-2xl text-[#19110b] font-light tracking-wide mb-2"
-                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                >
-                  Cadeau Personnalisé & Événements
-                </h2>
-                <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
-                  Offrez un cadeau unique pour chaque occasion. Mariages, anniversaires, fêtes — nous créons sur mesure.
-                </p>
-              </motion.div>
+              <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
+                Offrez un cadeau unique pour chaque occasion. Mariages, anniversaires, fêtes — nous créons sur mesure.
+              </p>
             </div>
             <ImageMarquee
               direction="left"

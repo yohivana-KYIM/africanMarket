@@ -131,23 +131,6 @@ const Login: FC = () => {
           </form>
         </motion.div>
 
-        {/* Footer */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="text-center mt-8"
-        >
-          <p className="text-[12px] text-[var(--lv-grey)] font-light">
-            Pas encore de compte ?{' '}
-            <Link
-              to="/register"
-              className="text-[var(--lv-black)] font-medium tracking-wide hover:text-[var(--lv-gold)] transition-colors underline underline-offset-4"
-            >
-              Créer un compte
-            </Link>
-          </p>
-        </motion.div>
       </motion.div>
     </div>
   );

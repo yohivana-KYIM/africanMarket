@@ -1,4 +1,4 @@
-import { type FC } from "react";
+import { type FC, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { HiOutlineShoppingBag, HiOutlineHeart, HiHeart } from "react-icons/hi";
@@ -16,6 +16,21 @@ interface ProductCardProps {
 const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishlist, isInWishlist, index = 0 }) => {
   const navigate = useNavigate();
   const hasSizes = product.sizes && product.sizes.length > 0;
+
+  // Multi-image support
+  const images = product.images && product.images.length > 1 ? product.images : [product.image];
+  const hasMultiple = images.length > 1;
+  const [currentImg, setCurrentImg] = useState(0);
+
+  const nextImage = useCallback(() => {
+    setCurrentImg((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+
+  useEffect(() => {
+    if (!hasMultiple) return;
+    const timer = setInterval(nextImage, 4000);
+    return () => clearInterval(timer);
+  }, [hasMultiple, nextImage]);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -45,13 +60,32 @@ const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishl
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className="relative overflow-hidden bg-[#f6f5f3] aspect-[3/4]"
       >
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]"
-          loading="lazy"
-        />
+        {images.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt={`${product.name}${hasMultiple ? ` - ${i + 1}` : ""}`}
+            className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06] ${
+              i === currentImg ? "opacity-100" : "opacity-0"
+            }`}
+            loading={i === 0 ? undefined : "lazy"}
+          />
+        ))}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700 pointer-events-none" />
+
+        {/* Image dots indicator */}
+        {hasMultiple && (
+          <div className="absolute bottom-14 sm:bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {images.map((_, i) => (
+              <span
+                key={i}
+                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
+                  i === currentImg ? "bg-white scale-110" : "bg-white/40"
+                }`}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Wishlist heart */}
         {onToggleWishlist && (

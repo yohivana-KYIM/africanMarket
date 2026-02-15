@@ -262,6 +262,20 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                   <HiOutlineUser size={20} />
                 </motion.button>
 
+                {/* Logout (desktop, visible only when logged in) */}
+                {user && (
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => { logout(); navigate("/"); }}
+                    className={`hidden sm:block text-[10px] font-medium tracking-[0.12em] uppercase transition-colors duration-300 ${
+                      headerSolid ? "text-[#757575] hover:text-red-600" : "text-white/60 hover:text-red-400"
+                    }`}
+                  >
+                    Déconnexion
+                  </motion.button>
+                )}
+
                 {/* Cart */}
                 <motion.button
                   whileHover={{ scale: 1.15, y: -1 }}
