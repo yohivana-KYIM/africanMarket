@@ -321,35 +321,26 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
           <div className="max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-10">
             <nav className="flex items-center justify-start lg:justify-center gap-0 overflow-x-auto scrollbar-hide">
               {categoriesConfig.map((cat) => (
-                <motion.button
+                <button
                   key={cat.slug}
-                  whileHover={{ y: -1 }}
                   onClick={() => goToCategory(cat.slug)}
                   onMouseEnter={() => setActiveMenu(cat.slug)}
-                  className={`group relative text-[9px] sm:text-[10px] lg:text-[11px] font-medium tracking-[0.14em] sm:tracking-[0.18em] uppercase transition-all duration-300 py-2.5 sm:py-3 px-2.5 sm:px-3 lg:px-4 whitespace-nowrap flex-shrink-0 ${
+                  className={`group relative text-[9px] sm:text-[10px] lg:text-[11px] font-medium tracking-[0.14em] sm:tracking-[0.18em] uppercase transition-colors duration-200 py-2.5 sm:py-3 px-2.5 sm:px-3 lg:px-4 whitespace-nowrap flex-shrink-0 hover:-translate-y-px ${
                     headerSolid
                       ? "text-[#19110b]/80 hover:text-[#19110b]"
                       : "text-white/80 hover:text-white"
                   } ${
-                    activeMenu === cat.slug
-                      ? headerSolid ? "!text-[#c5a467]" : "!text-[#c5a467]"
-                      : ""
+                    activeMenu === cat.slug ? "!text-[#c5a467]" : ""
                   }`}
                 >
                   {cat.label}
-                  {/* Animated underline */}
-                  <motion.span
-                    className={`absolute bottom-1.5 left-3 right-3 h-[2px] rounded-full origin-left ${
-                      headerSolid ? "bg-[#c5a467]" : "bg-[#c5a467]"
+                  {/* Underline */}
+                  <span
+                    className={`absolute bottom-1.5 left-3 right-3 h-[2px] rounded-full origin-left bg-[#c5a467] transition-transform duration-200 ${
+                      activeMenu === cat.slug ? "scale-x-100" : "scale-x-0"
                     }`}
-                    initial={false}
-                    animate={{
-                      scaleX: activeMenu === cat.slug ? 1 : 0,
-                      opacity: activeMenu === cat.slug ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
                   />
-                </motion.button>
+                </button>
               ))}
             </nav>
           </div>
