@@ -1,4 +1,4 @@
-import { useState, useEffect, type FC } from "react";
+import { useState, useEffect, lazy, Suspense, type FC } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -10,6 +10,7 @@ import {
   HiOutlineHeart,
   HiOutlineChevronRight,
   HiOutlineArrowLeft,
+  HiOutlineCamera,
 } from "react-icons/hi";
 import ContactPanel from "./ContactPanel";
 import { categoriesConfig } from "../data/categories";
@@ -17,6 +18,8 @@ import { formatPrice } from "../data/products";
 import { useAuth } from "../context/AuthContext";
 import { useSearch } from "../hooks/useSearch";
 import type { CategoryConfig } from "../types";
+
+const CameraSearch = lazy(() => import("./CameraSearch"));
 
 interface HeaderProps {
   cartCount: number;
@@ -31,6 +34,7 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [mobileSubMenu, setMobileSubMenu] = useState<CategoryConfig | null>(null);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -44,8 +48,8 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMobileMenuOpen || searchOpen ? "hidden" : "";
-  }, [isMobileMenuOpen, searchOpen]);
+    document.body.style.overflow = isMobileMenuOpen || searchOpen || cameraOpen ? "hidden" : "";
+  }, [isMobileMenuOpen, searchOpen, cameraOpen]);
 
   const closeSearch = () => {
     setSearchOpen(false);
@@ -160,7 +164,30 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                   >
                     Que recherchez-vous ?
                   </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.15 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setCameraOpen(true)}
+                    className={`ml-1 transition-colors duration-300 ${
+                      headerSolid ? "text-[#757575] hover:text-[#c5a467]" : "text-white/50 hover:text-white"
+                    }`}
+                    aria-label="Recherche camera"
+                  >
+                    <HiOutlineCamera size={17} />
+                  </motion.button>
                 </div>
+
+                {/* Mobile camera icon */}
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setCameraOpen(true)}
+                  className={`sm:hidden flex items-center transition-colors duration-300 ${
+                    headerSolid ? "text-[#19110b]" : "text-white"
+                  }`}
+                  aria-label="Recherche camera"
+                >
+                  <HiOutlineCamera size={20} />
+                </motion.button>
               </div>
 
               {/* CENTER — Logo */}
@@ -688,6 +715,12 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                   <HiOutlineSearch size={17} /> Rechercher
                 </button>
                 <button
+                  onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); setCameraOpen(true); }}
+                  className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
+                >
+                  <HiOutlineCamera size={17} /> Recherche Camera
+                </button>
+                <button
                   onClick={() => { setIsMobileMenuOpen(false); setMobileSubMenu(null); toggleWishlist(); }}
                   className="flex items-center gap-3 text-[11px] tracking-[0.15em] uppercase text-[#757575] hover:text-[#19110b] w-full transition-colors"
                 >
@@ -724,6 +757,11 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
 
       {/* ═══ CONTACT PANEL ═══ */}
       <ContactPanel isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+
+      {/* ═══ CAMERA SEARCH ═══ */}
+      <Suspense fallback={null}>
+        <CameraSearch isOpen={cameraOpen} onClose={() => setCameraOpen(false)} />
+      </Suspense>
     </>
   );
 };
