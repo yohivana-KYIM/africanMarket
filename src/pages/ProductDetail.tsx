@@ -10,7 +10,7 @@ import { formatPrice } from "../data/products";
 import type { Product } from "../types";
 
 interface ProductDetailProps {
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, size?: string) => void;
   products: Product[];
   toggleWishlist?: (product: Product) => void;
   isInWishlist?: (productId: string) => boolean;
@@ -22,9 +22,11 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
 
   useEffect(() => {
     setActiveImageIndex(0);
+    setSelectedSize(null);
   }, [id]);
 
   useEffect(() => {
@@ -37,12 +39,23 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
     window.scrollTo(0, 0);
   }, [id]);
 
+  const hasSizes = product?.sizes && product.sizes.length > 0;
+
   const handleAddToCart = () => {
     if (!product) return;
-    addToCart(product);
+    if (hasSizes && !selectedSize) {
+      toast(
+        <span className="text-[12px] tracking-[0.03em]">
+          Veuillez sélectionner une taille
+        </span>,
+        { icon: "⚠", style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } }
+      );
+      return;
+    }
+    addToCart(product, selectedSize || undefined);
     toast(
       <span className="text-[12px] tracking-[0.03em]">
-        <strong>{product.name}</strong> — ajouté au panier
+        <strong>{product.name}</strong>{selectedSize ? ` (${selectedSize})` : ""} — ajouté au panier
       </span>,
       { icon: "✓", style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } }
     );
@@ -293,6 +306,30 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
               </p>
             )}
 
+            {/* Size selector */}
+            {hasSizes && (
+              <div className="mb-8">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-[#757575] font-medium mb-3">
+                  {product.sizeType === 'pointure' ? 'Pointure' : 'Taille'} {selectedSize && <span className="text-[#19110b]">— {selectedSize}</span>}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => setSelectedSize(selectedSize === size ? null : size)}
+                      className={`min-w-[44px] h-[44px] px-3 flex items-center justify-center text-[12px] tracking-[0.05em] border transition-all duration-200 ${
+                        selectedSize === size
+                          ? "bg-[#19110b] text-white border-[#19110b]"
+                          : "bg-white text-[#19110b] border-[#e0ded9] hover:border-[#19110b]"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Actions */}
             <div className="flex gap-3 mb-8">
               <motion.button
@@ -372,6 +409,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
                   key={p.id}
                   product={p}
                   onAddToCart={(prod) => {
+                    if (prod.sizes && prod.sizes.length > 0) return;
                     addToCart(prod);
                     toast(
                       <span className="text-[12px] tracking-[0.03em]">

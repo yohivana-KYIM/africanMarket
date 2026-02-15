@@ -17,7 +17,9 @@ export const formatWhatsAppMessage = (
   cartItems.forEach((item) => {
     const itemTotal = item.price * item.quantity;
     total += itemTotal;
-    lines.push(`• ${item.name} x${item.quantity} - ${formatPrice(itemTotal)}`);
+    const sizeLabel = item.sizeType === 'pointure' ? 'Pointure' : 'Taille';
+    const sizePart = item.size ? ` (${sizeLabel}: ${item.size})` : "";
+    lines.push(`• ${item.name}${sizePart} x${item.quantity} - ${formatPrice(itemTotal)}`);
   });
 
   lines.push("");

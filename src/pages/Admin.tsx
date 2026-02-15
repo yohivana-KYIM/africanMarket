@@ -26,6 +26,15 @@ type Tab = "overview" | "products" | "add" | "edit";
 
 const MAX_IMAGES = 8;
 
+const POINTURE_PRESETS = ['36', '37', '38', '39', '40', '41', '42', '43', '44', '45', '46'];
+const TAILLE_PRESETS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'];
+
+const detectSizeType = (subSlug: string): string => {
+  if (/^(chaussures-|babouches-|ballerines-)/.test(subSlug)) return 'pointure';
+  if (/^vetements-/.test(subSlug)) return 'taille';
+  return '';
+};
+
 const emptyForm = {
   name: "",
   category: categoriesConfig[0].label,
@@ -37,6 +46,8 @@ const emptyForm = {
   discount: 0,
   images: [] as string[],
   description: "",
+  sizeType: "" as string,
+  sizes: [] as string[],
   featured: true,
 };
 
@@ -51,6 +62,7 @@ const Admin: FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [viewProduct, setViewProduct] = useState<Product | null>(null);
+  const [customSize, setCustomSize] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -124,12 +136,15 @@ const Admin: FC = () => {
     const cat = categoriesConfig.find((c) => c.slug === catSlug);
     if (cat) {
       const firstSub = cat.subcategories[0];
+      const newSizeType = detectSizeType(firstSub?.slug || '');
       setForm((prev) => ({
         ...prev,
         category: cat.label,
         categorySlug: cat.slug,
         subcategory: firstSub?.label || "",
         subcategorySlug: firstSub?.slug || "",
+        sizeType: newSizeType,
+        sizes: newSizeType !== prev.sizeType ? [] : prev.sizes,
       }));
     }
   };
@@ -138,10 +153,13 @@ const Admin: FC = () => {
     const cat = categoriesConfig.find((c) => c.slug === form.categorySlug);
     const sub = cat?.subcategories.find((s) => s.slug === subSlug);
     if (sub) {
+      const newSizeType = detectSizeType(sub.slug);
       setForm((prev) => ({
         ...prev,
         subcategory: sub.label,
         subcategorySlug: sub.slug,
+        sizeType: newSizeType,
+        sizes: newSizeType !== prev.sizeType ? [] : prev.sizes,
       }));
     }
   };
@@ -157,6 +175,8 @@ const Admin: FC = () => {
       image: form.images[0],
       oldPrice: form.oldPrice || null,
       discount: form.discount || null,
+      sizes: form.sizes,
+      sizeType: form.sizeType,
     };
 
     setSubmitting(true);
@@ -196,6 +216,8 @@ const Admin: FC = () => {
       discount: product.discount || 0,
       images: product.images.length > 0 ? [...product.images] : product.image ? [product.image] : [],
       description: product.description,
+      sizeType: product.sizeType || "",
+      sizes: product.sizes ? [...product.sizes] : [],
       featured: product.featured,
     });
     setEditId(product.id);
@@ -758,6 +780,135 @@ const Admin: FC = () => {
                   </div>
                 </div>
 
+                {/* Sizes section */}
+                <div className="bg-white border border-[#e8e8e8] p-4 sm:p-6">
+                  <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium mb-4 sm:mb-5">
+                    Tailles
+                  </p>
+
+                  {/* Size type selector */}
+                  <div className="mb-4">
+                    <label className="block text-[10px] tracking-[0.15em] uppercase text-[#757575] mb-2">Type de taille</label>
+                    <select
+                      value={form.sizeType}
+                      onChange={(e) => {
+                        const newType = e.target.value;
+                        setForm((prev) => ({
+                          ...prev,
+                          sizeType: newType,
+                          sizes: newType !== prev.sizeType ? [] : prev.sizes,
+                        }));
+                      }}
+                      className="w-full border-b border-[#e8e8e8] py-2.5 text-[14px] text-[#19110b] font-light bg-transparent outline-none focus:border-[#19110b] transition-colors cursor-pointer appearance-none"
+                    >
+                      <option value="">Aucune taille</option>
+                      <option value="pointure">Pointure (chaussures)</option>
+                      <option value="taille">Taille (vêtements)</option>
+                    </select>
+                  </div>
+
+                  {/* Preset buttons */}
+                  {form.sizeType && (
+                    <div className="mb-4">
+                      <p className="text-[10px] tracking-[0.1em] uppercase text-[#757575] mb-2">
+                        {form.sizeType === 'pointure' ? 'Pointures disponibles' : 'Tailles disponibles'}
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {(form.sizeType === 'pointure' ? POINTURE_PRESETS : TAILLE_PRESETS).map((s) => {
+                          const active = form.sizes.includes(s);
+                          return (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => {
+                                setForm((prev) => ({
+                                  ...prev,
+                                  sizes: active
+                                    ? prev.sizes.filter((x) => x !== s)
+                                    : [...prev.sizes, s],
+                                }));
+                              }}
+                              className={`min-w-[40px] h-[36px] px-2.5 flex items-center justify-center text-[11px] tracking-[0.05em] border transition-all duration-200 ${
+                                active
+                                  ? "bg-[#19110b] text-white border-[#19110b]"
+                                  : "bg-white text-[#757575] border-[#e8e8e8] hover:border-[#19110b] hover:text-[#19110b]"
+                              }`}
+                            >
+                              {s}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Custom size input */}
+                  {form.sizeType && (
+                    <div className="flex gap-2 items-end">
+                      <div className="flex-1">
+                        <p className="text-[10px] tracking-[0.1em] uppercase text-[#757575] mb-1.5">Ajouter une taille personnalisée :</p>
+                        <input
+                          type="text"
+                          value={customSize}
+                          onChange={(e) => setCustomSize(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.preventDefault();
+                              const val = customSize.trim();
+                              if (val && !form.sizes.includes(val)) {
+                                setForm((prev) => ({ ...prev, sizes: [...prev.sizes, val] }));
+                              }
+                              setCustomSize("");
+                            }
+                          }}
+                          placeholder={form.sizeType === 'pointure' ? 'Ex: 47' : 'Ex: 4XL'}
+                          className="w-full border-b border-[#e8e8e8] py-2 text-[13px] text-[#19110b] font-light bg-transparent outline-none focus:border-[#19110b] transition-colors placeholder:text-[#d0d0d0]"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const val = customSize.trim();
+                          if (val && !form.sizes.includes(val)) {
+                            setForm((prev) => ({ ...prev, sizes: [...prev.sizes, val] }));
+                          }
+                          setCustomSize("");
+                        }}
+                        disabled={!customSize.trim()}
+                        className="text-[10px] tracking-[0.1em] uppercase text-[#19110b] border border-[#19110b] px-3 py-2 hover:bg-[#19110b] hover:text-white transition-colors disabled:opacity-30 disabled:cursor-not-allowed mb-[1px]"
+                      >
+                        Ajouter
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Selected sizes display */}
+                  {form.sizes.length > 0 && (
+                    <div className="mt-4 pt-3 border-t border-[#f0f0f0]">
+                      <p className="text-[10px] tracking-[0.1em] uppercase text-[#757575] mb-2">
+                        {form.sizes.length} {form.sizeType === 'pointure' ? 'pointure(s)' : 'taille(s)'} sélectionnée(s)
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {form.sizes.map((s) => (
+                          <span
+                            key={s}
+                            className="inline-flex items-center gap-1 bg-[#f6f5f3] text-[11px] text-[#19110b] px-2.5 py-1.5 border border-[#e8e8e8]"
+                          >
+                            {s}
+                            <button
+                              type="button"
+                              onClick={() => setForm((prev) => ({ ...prev, sizes: prev.sizes.filter((x) => x !== s) }))}
+                              className="text-[#757575] hover:text-[#19110b] ml-0.5"
+                            >
+                              <HiOutlineX size={10} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 {/* Featured toggle */}
                 <div className="bg-white border border-[#e8e8e8] p-4 sm:p-6">
                   <label className="flex items-center gap-3 cursor-pointer">
@@ -918,6 +1069,20 @@ const Admin: FC = () => {
                   <div>
                     <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-0.5">Description</p>
                     <p className="text-[13px] text-[#757575] font-light leading-relaxed">{viewProduct.description}</p>
+                  </div>
+                )}
+                {viewProduct.sizes && viewProduct.sizes.length > 0 && (
+                  <div>
+                    <p className="text-[9px] tracking-[0.15em] uppercase text-[#757575] mb-1">
+                      {viewProduct.sizeType === 'pointure' ? 'Pointures' : 'Tailles'}
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {viewProduct.sizes.map((s) => (
+                        <span key={s} className="text-[11px] text-[#19110b] bg-[#f6f5f3] border border-[#e8e8e8] px-2 py-0.5">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 )}
                 <div>

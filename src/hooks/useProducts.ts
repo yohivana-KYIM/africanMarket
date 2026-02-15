@@ -44,6 +44,8 @@ export const mapProduct = (doc: any): Product => {
     image: images[0] || "",
     images,
     description: doc.description || "",
+    sizes: Array.isArray(doc.sizes) ? doc.sizes : [],
+    sizeType: doc.sizeType || "",
     featured: doc.featured || false,
   };
 };

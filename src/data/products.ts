@@ -19,8 +19,9 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&q=80",
     ],
     description: "Sac bandoulière en tissu wax authentique avec finitions cuir premium. Doublure intérieure soie.",
+    sizes: [],
+    sizeType: "",
     featured: true,
-
   },
   {
     id: "default-2",
@@ -39,8 +40,9 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80",
     ],
     description: "Sac à main en bogolan malien fait main. Cuir tanné végétal et teintures naturelles.",
+    sizes: [],
+    sizeType: "",
     featured: true,
-
   },
   {
     id: "default-3",
@@ -59,8 +61,9 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=800&q=80",
     ],
     description: "Pochette de soirée en cuir grainé africain. Fermoir magnétique doré. Chaîne amovible.",
+    sizes: [],
+    sizeType: "",
     featured: true,
-
   },
   {
     id: "default-4",
@@ -79,6 +82,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=800&q=80",
     ],
     description: "Sac à dos en tissu kente ghanéen tissé main. Compartiment laptop 15 pouces. Cuir pleine fleur.",
+    sizes: [],
+    sizeType: "",
     featured: true,
 
   },
@@ -99,6 +104,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1547949003-9792a18a2601?w=800&q=80",
     ],
     description: "Mini sac sport en toile wax imperméable. Parfait pour le quotidien. Léger et résistant.",
+    sizes: [],
+    sizeType: "",
     featured: false,
 
   },
@@ -119,6 +126,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=800&q=80",
     ],
     description: "Sac de voyage XL en cuir et wax. Grande capacité 45L. Bandoulière ajustable.",
+    sizes: [],
+    sizeType: "",
     featured: false,
 
   },
@@ -140,6 +149,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80",
     ],
     description: "Sandales artisanales en cuir de chèvre tanné naturel. Semelle confort. Fabriquées au Cameroun.",
+    sizes: ['38', '39', '40', '41', '42', '43', '44', '45'],
+    sizeType: "pointure",
     featured: true,
 
   },
@@ -160,6 +171,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80",
     ],
     description: "Baskets urbaines avec empiècements wax africain. Semelle en caoutchouc naturel. Unisexe.",
+    sizes: ['38', '39', '40', '41', '42', '43', '44', '45'],
+    sizeType: "pointure",
     featured: true,
 
   },
@@ -180,6 +193,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=800&q=80",
     ],
     description: "Escarpins en cuir véritable avec détails wax. Talon 8cm confort. Intérieur cuir.",
+    sizes: ['36', '37', '38', '39', '40', '41', '42'],
+    sizeType: "pointure",
     featured: true,
 
   },
@@ -201,6 +216,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=800&q=80",
     ],
     description: "Eau de parfum Oud africain. Notes de bois précieux, ambre et musc. Longue tenue 12h.",
+    sizes: [],
+    sizeType: "",
     featured: true,
 
   },
@@ -221,6 +238,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1587017539504-67cfbddac569?w=800&q=80",
     ],
     description: "Parfum floral Ylang-Ylang de Madagascar. Notes de jasmin, vanille et bois de santal.",
+    sizes: [],
+    sizeType: "",
     featured: true,
 
   },
@@ -241,6 +260,8 @@ export const products: Product[] = [
       "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=800&q=80",
     ],
     description: "Eau de parfum boisé-épicé. Notes de baobab, poivre de Penja et cardamome. Flacon artisanal.",
+    sizes: [],
+    sizeType: "",
     featured: true,
 
   },

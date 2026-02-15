@@ -11,8 +11,8 @@ interface CartProps {
   onClose: () => void;
   cartItems: CartItem[];
   cartTotal: number;
-  updateQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
+  updateQuantity: (productId: string, quantity: number, size?: string) => void;
+  removeFromCart: (productId: string, size?: string) => void;
   clearCart: () => void;
 }
 
@@ -85,7 +85,7 @@ const Cart: FC<CartProps> = ({
                 <div>
                   {cartItems.map((item) => (
                     <motion.div
-                      key={item.id}
+                      key={`${item.id}_${item.size || ""}`}
                       layout
                       initial={{ opacity: 0, x: 30 }}
                       animate={{ opacity: 1, x: 0 }}
@@ -107,6 +107,9 @@ const Cart: FC<CartProps> = ({
                         </p>
                         <h3 className="text-[12px] sm:text-[13px] text-[#19110b] font-normal truncate mb-1">
                           {item.name}
+                          {item.size && (
+                            <span className="text-[10px] text-[#757575] ml-1.5">— {item.sizeType === 'pointure' ? 'Pointure' : 'Taille'} {item.size}</span>
+                          )}
                         </h3>
                         <p className="text-[12px] sm:text-[13px] text-[#19110b] font-medium mb-2 sm:mb-3">
                           {formatPrice(item.price)}
@@ -115,7 +118,7 @@ const Cart: FC<CartProps> = ({
                         <div className="flex items-center justify-between mt-auto">
                           <div className="flex items-center border border-[#e8e8e8]">
                             <button
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              onClick={() => updateQuantity(item.id, item.quantity - 1, item.size)}
                               className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-[#757575] hover:text-[#19110b] transition-colors"
                             >
                               <HiMinus size={10} />
@@ -124,7 +127,7 @@ const Cart: FC<CartProps> = ({
                               {item.quantity}
                             </span>
                             <button
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              onClick={() => updateQuantity(item.id, item.quantity + 1, item.size)}
                               className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center text-[#757575] hover:text-[#19110b] transition-colors"
                             >
                               <HiPlus size={10} />
@@ -132,7 +135,7 @@ const Cart: FC<CartProps> = ({
                           </div>
 
                           <button
-                            onClick={() => removeFromCart(item.id)}
+                            onClick={() => removeFromCart(item.id, item.size)}
                             className="text-[#757575] hover:text-[#19110b] transition-colors p-1"
                             aria-label="Supprimer"
                           >

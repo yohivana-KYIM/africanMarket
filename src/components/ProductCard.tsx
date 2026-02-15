@@ -15,6 +15,16 @@ interface ProductCardProps {
 
 const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishlist, isInWishlist, index = 0 }) => {
   const navigate = useNavigate();
+  const hasSizes = product.sizes && product.sizes.length > 0;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (hasSizes) {
+      navigate(`/product/${product.id}`);
+    } else {
+      onAddToCart(product);
+    }
+  };
 
   return (
     <motion.div
@@ -65,26 +75,20 @@ const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishl
         {/* Add to cart — slides up on hover (hidden on touch) */}
         <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hidden sm:block">
           <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToCart(product);
-            }}
+            onClick={handleAddToCart}
             className="w-full bg-[#19110b]/90 backdrop-blur-sm text-white text-[10px] font-medium tracking-[0.2em] uppercase py-3.5 sm:py-4 flex items-center justify-center gap-2 hover:bg-[#19110b] transition-colors"
           >
             <HiOutlineShoppingBag size={14} />
-            Ajouter au panier
+            {hasSizes ? "Voir les tailles" : "Ajouter au panier"}
           </button>
         </div>
 
         {/* Mobile: always-visible add button */}
         <motion.button
           whileTap={{ scale: 0.85 }}
-          onClick={(e) => {
-            e.stopPropagation();
-            onAddToCart(product);
-          }}
+          onClick={handleAddToCart}
           className="sm:hidden absolute bottom-3 right-3 bg-[#19110b]/90 backdrop-blur-sm text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg"
-          aria-label="Ajouter au panier"
+          aria-label={hasSizes ? "Voir les tailles" : "Ajouter au panier"}
         >
           <HiOutlineShoppingBag size={16} />
         </motion.button>

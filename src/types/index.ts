@@ -11,11 +11,14 @@ export interface Product {
   image: string;
   images: string[];
   description: string;
+  sizes: string[];
+  sizeType: string;
   featured: boolean;
 }
 
 export interface CartItem extends Product {
   quantity: number;
+  size?: string;
 }
 
 export interface HeroSlide {
