@@ -7,6 +7,7 @@ import SEO from "../components/SEO";
 import { categoriesConfig, getCategoryBySlug, getSubcategory } from "../data/categories";
 import { formatPrice } from "../data/products";
 import ProductCard from "../components/ProductCard";
+import ImageMarquee from "../components/ImageMarquee";
 import type { Product } from "../types";
 
 interface CategoryProps {
@@ -374,36 +375,24 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
             </div>
           </section>
 
-          {/* Services Cards */}
+          {/* Services Cards — LV style with full images */}
           <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-14 sm:mb-20">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {[
                 {
                   title: "Réparation",
-                  desc: "Fermetures éclair, coutures défaites, anses cassées — nos artisans redonnent vie à vos sacs et accessoires avec précision.",
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-7 h-7">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085" />
-                    </svg>
-                  ),
+                  desc: "Fermetures éclair, coutures défaites, anses cassées — nos artisans redonnent vie à vos pièces.",
+                  image: "https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?w=600&q=80",
                 },
                 {
                   title: "Personnalisation",
-                  desc: "Gravure d'initiales, choix des couleurs, ajout de motifs wax — créez une pièce unique qui vous ressemble.",
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-7 h-7">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
-                    </svg>
-                  ),
+                  desc: "Gravure d'initiales, choix des couleurs, motifs wax — créez une pièce unique.",
+                  image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=600&q=80",
                 },
                 {
                   title: "Entretien",
-                  desc: "Nettoyage professionnel, traitement du cuir, imperméabilisation — prolongez la beauté de vos accessoires.",
-                  icon: (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.2} stroke="currentColor" className="w-7 h-7">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                    </svg>
-                  ),
+                  desc: "Nettoyage professionnel, traitement du cuir — prolongez la beauté de vos accessoires.",
+                  image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?w=600&q=80",
                 },
               ].map((service, i) => (
                 <motion.div
@@ -411,29 +400,129 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
                   initial="hidden"
                   whileInView="visible"
                   viewport={{ once: true }}
-                  transition={{ duration: 0.7, delay: i * 0.1 }}
+                  transition={{ duration: 0.7, delay: i * 0.12 }}
                   variants={fadeUp}
                 >
-                  <motion.div
-                    whileHover={{ y: -5 }}
-                    className="bg-[#faf9f7] p-6 sm:p-8 h-full flex flex-col items-center text-center transition-shadow hover:shadow-md"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center text-[#c5a467] mb-5 shadow-sm">
-                      {service.icon}
+                  <div className="group relative overflow-hidden aspect-[4/5] cursor-pointer">
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
+                      <h3
+                        className="text-[16px] sm:text-[18px] text-white font-light tracking-wide mb-2"
+                        style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                      >
+                        {service.title}
+                      </h3>
+                      <p className="text-[11px] sm:text-[12px] text-white/70 font-light leading-relaxed">
+                        {service.desc}
+                      </p>
+                      <div className="w-0 group-hover:w-10 h-[2px] bg-[#c5a467] mt-3 transition-all duration-500" />
                     </div>
-                    <h3
-                      className="text-[15px] sm:text-[17px] text-[#19110b] font-light mb-3 tracking-wide"
-                      style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
-                    >
-                      {service.title}
-                    </h3>
-                    <p className="text-[12px] sm:text-[13px] text-[#757575] font-light leading-relaxed flex-1">
-                      {service.desc}
-                    </p>
-                  </motion.div>
+                  </div>
                 </motion.div>
               ))}
             </div>
+          </section>
+
+          {/* ═══ Marquee Section : Voyage ═══ */}
+          <section className="mb-14 sm:mb-20">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-6 sm:mb-8 text-center">
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp}>
+                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-2">
+                  Service
+                </p>
+                <h2
+                  className="text-xl sm:text-2xl text-[#19110b] font-light tracking-wide mb-2"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Voyage
+                </h2>
+                <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
+                  Voyagez avec élégance. Découvrez nos bagages, trousses et accessoires conçus pour sublimer chaque déplacement.
+                </p>
+              </motion.div>
+            </div>
+            <ImageMarquee
+              direction="left"
+              speed={35}
+              images={[
+                { src: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=500&q=80", alt: "Bagage voyage cuir" },
+                { src: "https://images.unsplash.com/photo-1581553680321-4fffae0cb598?w=500&q=80", alt: "Valise voyage" },
+                { src: "https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=500&q=80", alt: "Trousse voyage" },
+                { src: "https://images.unsplash.com/photo-1473188588951-bf003f56e226?w=500&q=80", alt: "Accessoire voyage" },
+                { src: "https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=500&q=80", alt: "Destination voyage" },
+                { src: "https://images.unsplash.com/photo-1520006403909-838d6b92c22e?w=500&q=80", alt: "Voyage luxe" },
+              ]}
+            />
+          </section>
+
+          {/* ═══ Marquee Section : Achat Programmé ═══ */}
+          <section className="mb-14 sm:mb-20">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-6 sm:mb-8 text-center">
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp}>
+                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-2">
+                  Service
+                </p>
+                <h2
+                  className="text-xl sm:text-2xl text-[#19110b] font-light tracking-wide mb-2"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Achat Programmé
+                </h2>
+                <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
+                  Acquérez le sac de vos rêves grâce à notre programme de cotisations. Étalez votre investissement en toute sérénité.
+                </p>
+              </motion.div>
+            </div>
+            <ImageMarquee
+              direction="right"
+              speed={40}
+              images={[
+                { src: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=500&q=80", alt: "Sac cuir artisanal" },
+                { src: "https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=500&q=80", alt: "Maroquinerie luxe" },
+                { src: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80", alt: "Sac à main cuir" },
+                { src: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?w=500&q=80", alt: "Collection sacs" },
+                { src: "https://images.unsplash.com/photo-1594223274512-ad4803739b7c?w=500&q=80", alt: "Accessoire maroquinerie" },
+                { src: "https://images.unsplash.com/photo-1575032617751-6ddec2089882?w=500&q=80", alt: "Sac designer" },
+              ]}
+            />
+          </section>
+
+          {/* ═══ Marquee Section : Cadeau Personnalisé / Événements ═══ */}
+          <section className="mb-14 sm:mb-20">
+            <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 mb-6 sm:mb-8 text-center">
+              <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} transition={{ duration: 0.7 }} variants={fadeUp}>
+                <p className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase text-[#c5a467] font-medium mb-2">
+                  Service
+                </p>
+                <h2
+                  className="text-xl sm:text-2xl text-[#19110b] font-light tracking-wide mb-2"
+                  style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+                >
+                  Cadeau Personnalisé & Événements
+                </h2>
+                <p className="text-[12px] sm:text-[13px] text-[#757575] font-light max-w-lg mx-auto">
+                  Offrez un cadeau unique pour chaque occasion. Mariages, anniversaires, fêtes — nous créons sur mesure.
+                </p>
+              </motion.div>
+            </div>
+            <ImageMarquee
+              direction="left"
+              speed={35}
+              images={[
+                { src: "https://images.unsplash.com/photo-1549465220-1a8b9238f760?w=500&q=80", alt: "Cadeau emballé luxe" },
+                { src: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=500&q=80", alt: "Paquet cadeau" },
+                { src: "https://images.unsplash.com/photo-1512909006721-3d6018887383?w=500&q=80", alt: "Événement spécial" },
+                { src: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=500&q=80", alt: "Cadeau personnalisé" },
+                { src: "https://images.unsplash.com/photo-1607469256872-48b27137ab55?w=500&q=80", alt: "Coffret cadeau" },
+                { src: "https://images.unsplash.com/photo-1577998474517-7eeeed4e448a?w=500&q=80", alt: "Célébration événement" },
+              ]}
+            />
           </section>
 
           {/* How it works */}

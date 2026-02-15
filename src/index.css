@@ -177,6 +177,23 @@ img[loading="lazy"] {
   animation: shimmer 1.5s ease infinite;
 }
 
+/* Marquee scroll animations */
+@keyframes marquee-scroll-left {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-scroll-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [style*="marquee-scroll"] {
+    animation: none !important;
+  }
+}
+
 /* Focus-visible for accessibility */
 :focus-visible {
   outline: 2px solid var(--lv-gold);
