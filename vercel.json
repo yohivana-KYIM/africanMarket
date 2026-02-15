@@ -2,7 +2,6 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "cleanUrls": true,
   "trailingSlash": false,
   "headers": [
     {
@@ -19,6 +18,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/200.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
