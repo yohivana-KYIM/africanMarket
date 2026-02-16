@@ -152,6 +152,8 @@ const Footer: FC = () => {
               src="/africamarket-logo.jpg"
               alt="Africa Market"
               className="h-12 sm:h-14 w-auto object-contain"
+              loading="lazy"
+              decoding="async"
             />
 
             {/* Social icons */}

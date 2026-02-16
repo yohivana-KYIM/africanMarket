@@ -232,6 +232,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                   className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
+                  decoding="async"
                 />
               </AnimatePresence>
               {product.discount && (
@@ -280,7 +281,7 @@ const ProductDetail: FC<ProductDetailProps> = ({ addToCart, products, toggleWish
                         : "ring-1 ring-[#e8e8e8] opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img} alt={`${product.name} - Miniature ${index + 1}`} className="w-full h-full object-cover" />
+                    <img src={img} alt={`${product.name} - Miniature ${index + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                   </button>
                 ))}
               </div>

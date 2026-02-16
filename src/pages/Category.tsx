@@ -261,6 +261,7 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
             src={category.image}
             alt={category.label}
             className="w-full h-full object-cover"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 lg:p-12">
@@ -300,6 +301,7 @@ const Category: FC<CategoryProps> = ({ addToCart, products, toggleWishlist, isIn
                 alt={category.banner.title}
                 className="w-full h-full object-cover transition-transform duration-[1.2s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.04]"
                 loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
               <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 lg:px-12">

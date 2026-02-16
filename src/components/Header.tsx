@@ -430,6 +430,8 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                       src={activeCat.image}
                       alt={activeCat.label}
                       className="w-full h-[280px] object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </motion.div>
 
@@ -546,7 +548,7 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                         className="w-full flex items-center gap-4 py-3 px-2 hover:bg-[#f6f5f3] transition-colors"
                       >
                         <div className="w-12 h-16 sm:w-14 sm:h-18 bg-[#f6f5f3] overflow-hidden shrink-0">
-                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                          <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         </div>
                         <div className="flex-1 text-left min-w-0">
                           <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575]">{product.category}</p>
@@ -691,6 +693,8 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                             src={mobileSubMenu.image}
                             alt={mobileSubMenu.label}
                             className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </motion.div>
                         <h3

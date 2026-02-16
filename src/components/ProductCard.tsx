@@ -68,7 +68,8 @@ const ProductCard: FC<ProductCardProps> = ({ product, onAddToCart, onToggleWishl
             className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06] ${
               i === currentImg ? "opacity-100" : "opacity-0"
             }`}
-            loading={i === 0 ? undefined : "lazy"}
+            loading="lazy"
+            decoding="async"
           />
         ))}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700 pointer-events-none" />

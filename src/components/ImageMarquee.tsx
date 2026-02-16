@@ -47,6 +47,7 @@ const ImageMarquee: FC<ImageMarqueeProps> = ({
               alt={img.alt}
               className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:scale-[1.05]"
               loading="lazy"
+              decoding="async"
             />
           </div>
         ))}

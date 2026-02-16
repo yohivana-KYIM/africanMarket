@@ -53,9 +53,10 @@ const Collections: FC = () => {
           className="absolute inset-0"
         >
           <img
-            src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&q=75"
             alt="Nos Collections"
             className="w-full h-full object-cover"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/10" />
         </motion.div>
@@ -150,6 +151,8 @@ const Collections: FC = () => {
                           src={cat.image}
                           alt={cat.label}
                           className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
+                          loading="lazy"
+                          decoding="async"
                         />
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent group-hover:from-black/70 transition-all duration-700" />

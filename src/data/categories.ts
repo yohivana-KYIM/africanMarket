@@ -4,7 +4,7 @@ export const categoriesConfig: CategoryConfig[] = [
   {
     label: "Africa Market Bags",
     slug: "africa-market-bags",
-    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=70",
     subcategories: [
       { label: "Sac Monsieur", slug: "sac-monsieur" },
       { label: "Sac à dos Sport", slug: "sac-dos-sport" },
@@ -20,7 +20,7 @@ export const categoriesConfig: CategoryConfig[] = [
       { label: "Couplet voyage", slug: "couplet-voyage" },
     ],
     banner: {
-      image: "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=1400&q=80",
+      image: "https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=1000&q=70",
       link: "/categorie/africa-market-bags/sac-a-main",
       title: "Nouvelle Collection Sacs à Main",
       subtitle: "Jusqu'à -20% sur la collection printemps",
@@ -29,7 +29,7 @@ export const categoriesConfig: CategoryConfig[] = [
   {
     label: "Accessoires",
     slug: "accessoires",
-    image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1603487742131-4160ec999306?w=600&q=70",
     subcategories: [
       { label: "Cadeau petits", slug: "cadeau-petits" },
       { label: "Cadeau grands", slug: "cadeau-grands" },
@@ -51,7 +51,7 @@ export const categoriesConfig: CategoryConfig[] = [
       { label: "Porte-feuille Femmes", slug: "portefeuille-femmes" },
     ],
     banner: {
-      image: "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=1400&q=80",
+      image: "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=1000&q=70",
       link: "/categorie/accessoires/chaussures-hommes",
       title: "Chaussures Artisanales",
       subtitle: "Le savoir-faire africain à vos pieds",
@@ -60,12 +60,12 @@ export const categoriesConfig: CategoryConfig[] = [
   {
     label: "Achat Programmé",
     slug: "achat-programme",
-    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&q=70",
     subcategories: [
       { label: "Cotisations sacs", slug: "cotisations-sacs" },
     ],
     banner: {
-      image: "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1400&q=80",
+      image: "https://images.unsplash.com/photo-1607082349566-187342175e2f?w=1000&q=70",
       link: "/categorie/achat-programme/cotisations-sacs",
       title: "Programme de Cotisations",
       subtitle: "Étalez vos achats et profitez d'avantages exclusifs",
@@ -74,12 +74,12 @@ export const categoriesConfig: CategoryConfig[] = [
   {
     label: "Nos Services",
     slug: "services",
-    image: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=600&q=70",
     subcategories: [
       { label: "Réparation", slug: "reparation" },
     ],
     banner: {
-      image: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=1400&q=80",
+      image: "https://images.unsplash.com/photo-1581783898377-1c85bf937427?w=1000&q=70",
       link: "/categorie/services/reparation",
       title: "Service Réparation Expert",
       subtitle: "Redonnez vie à vos pièces préférées",
@@ -88,13 +88,13 @@ export const categoriesConfig: CategoryConfig[] = [
   {
     label: "Cadeaux Événement",
     slug: "cadeaux",
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238f796?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238f796?w=600&q=70",
     subcategories: [
       { label: "Cadeau pour elle", slug: "cadeau-pour-elle" },
       { label: "Cadeau pour lui", slug: "cadeau-pour-lui" },
     ],
     banner: {
-      image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1400&q=80",
+      image: "https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1000&q=70",
       link: "/categorie/cadeaux/cadeau-pour-elle",
       title: "Idées Cadeaux d'Exception",
       subtitle: "Offrez l'essence de l'Afrique à vos proches",

@@ -131,6 +131,8 @@ const Home: FC<HomeProps> = ({ addToCart, products, toggleWishlist, isInWishlist
                       src={cat.image}
                       alt={cat.label}
                       className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent group-hover:from-black/60 transition-all duration-700" />
@@ -171,6 +173,8 @@ const Home: FC<HomeProps> = ({ addToCart, products, toggleWishlist, isInWishlist
                       src={cat.image}
                       alt={cat.label}
                       className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent group-hover:from-black/60 transition-all duration-700" />
@@ -229,9 +233,11 @@ const Home: FC<HomeProps> = ({ addToCart, products, toggleWishlist, isInWishlist
           className="absolute inset-0"
         >
           <img
-            src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1600&q=80"
+            src="https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=1200&q=75"
             alt="Lifestyle"
             className="w-full h-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-black/35" />
         </motion.div>

@@ -383,7 +383,7 @@ const Admin: FC = () => {
                 {products.slice(-4).reverse().map((product) => (
                   <div key={product.id} className="group">
                     <div className="aspect-[3/4] bg-[#f6f5f3] overflow-hidden mb-2 sm:mb-3">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     </div>
                     <p className="text-[10px] tracking-[0.1em] uppercase text-[#757575] mb-0.5">{product.category}</p>
                     <p className="text-[12px] sm:text-[13px] text-[#19110b] truncate">{product.name}</p>
@@ -456,7 +456,7 @@ const Admin: FC = () => {
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-3">
                             <div className="relative w-12 h-14 bg-[#f6f5f3] overflow-hidden shrink-0 group/img">
-                              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                              <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                               {product.images.length > 1 && (
                                 <span className="absolute bottom-0.5 right-0.5 text-[8px] bg-[#19110b]/80 text-white px-1 py-px leading-tight">
                                   +{product.images.length - 1}
@@ -467,7 +467,7 @@ const Admin: FC = () => {
                                 <div className="hidden group-hover/img:flex absolute left-14 top-0 z-50 bg-white border border-[#e8e8e8] shadow-lg p-2 gap-1.5">
                                   {product.images.map((img, idx) => (
                                     <div key={idx} className={`w-14 h-[72px] overflow-hidden shrink-0 ${idx === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"}`}>
-                                      <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" />
+                                      <img src={img} alt={`${product.name} ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                                     </div>
                                   ))}
                                 </div>
@@ -483,7 +483,7 @@ const Admin: FC = () => {
                           <div className="flex items-center gap-1">
                             {(product.images.length > 0 ? product.images : [product.image]).slice(0, 4).map((img, idx) => (
                               <div key={idx} className={`w-8 h-10 overflow-hidden shrink-0 ${idx === 0 ? "ring-1 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"}`}>
-                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                <img src={img} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                               </div>
                             ))}
                             {product.images.length > 4 && (
@@ -545,7 +545,7 @@ const Admin: FC = () => {
                 {filteredProducts.map((product) => (
                   <div key={product.id} className="flex items-center gap-3 p-4">
                     <div className="relative w-16 h-20 bg-[#f6f5f3] overflow-hidden shrink-0">
-                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                      <img src={product.image} alt={product.name} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                       {product.images.length > 1 && (
                         <span className="absolute bottom-0.5 right-0.5 text-[8px] bg-[#19110b]/80 text-white px-1 py-px leading-tight">
                           {product.images.length} photos
@@ -614,7 +614,7 @@ const Admin: FC = () => {
                           index === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8] hover:ring-[#19110b]"
                         }`}
                       >
-                        <img src={img} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" />
+                        <img src={img} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                         {index === 0 && (
                           <span className="absolute top-1.5 left-1.5 text-[8px] tracking-[0.1em] uppercase bg-[#c5a467] text-white px-1.5 py-0.5">
                             Principale
@@ -1029,7 +1029,7 @@ const Admin: FC = () => {
                       idx === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"
                     }`}
                   >
-                    <img src={img} alt={`${viewProduct.name} - ${idx + 1}`} className="w-full h-full object-cover" />
+                    <img src={img} alt={`${viewProduct.name} - ${idx + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
                     {idx === 0 && (
                       <span className="absolute top-1.5 left-1.5 text-[8px] tracking-[0.1em] uppercase bg-[#c5a467] text-white px-1.5 py-0.5">
                         Principale
