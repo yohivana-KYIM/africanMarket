@@ -345,14 +345,26 @@ export const useCameraSearch = () => {
   }, [stopStream]);
 
   // Assign stream to video element once it's rendered in viewfinder state
+  // Uses retry interval to handle AnimatePresence exit delay
   useEffect(() => {
-    if (state === "viewfinder" && videoRef.current && streamRef.current) {
-      const video = videoRef.current;
-      if (!video.srcObject) {
-        video.srcObject = streamRef.current;
-        video.play().catch(() => {});
+    if (state !== "viewfinder") return;
+
+    const attach = () => {
+      if (videoRef.current && streamRef.current && !videoRef.current.srcObject) {
+        videoRef.current.srcObject = streamRef.current;
+        videoRef.current.play().catch(() => {});
+        return true;
       }
-    }
+      return false;
+    };
+
+    if (attach()) return;
+
+    const interval = setInterval(() => {
+      if (attach()) clearInterval(interval);
+    }, 100);
+
+    return () => clearInterval(interval);
   }, [state]);
 
   // Cleanup on unmount
