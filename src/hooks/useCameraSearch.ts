@@ -1,9 +1,12 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import toast from "react-hot-toast";
 import type { Product } from "../types";
 import { mapProduct } from "./useProducts";
 import environment from "../environment";
 
 const API = `${environment.API_URL}/api/products`;
+
+const TOAST_STYLE = { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" };
 
 export type CameraState =
   | "idle"
@@ -12,6 +15,9 @@ export type CameraState =
   | "capturing"
   | "results"
   | "error";
+
+export type LoadingStage = "init" | "tensorflow" | "model" | "camera" | "ready";
+export type AnalyzingStage = "capturing" | "detecting" | "classifying" | "searching";
 
 interface Classification {
   className: string;
@@ -96,6 +102,8 @@ export const useCameraSearch = () => {
   const [results, setResults] = useState<Product[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string>("");
+  const [loadingStage, setLoadingStage] = useState<LoadingStage>("init");
+  const [analyzingStage, setAnalyzingStage] = useState<AnalyzingStage>("capturing");
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -150,11 +158,14 @@ export const useCameraSearch = () => {
     setResults([]);
     setActiveSearchTerm("");
     setCapturedImage("");
+    setLoadingStage("init");
+    setAnalyzingStage("capturing");
 
     // Check browser support
     if (!navigator.mediaDevices?.getUserMedia) {
       setState("error");
       setError("Votre navigateur ne supporte pas l'acces a la camera.");
+      toast.error("Camera non supportee par ce navigateur", { style: TOAST_STYLE });
       return;
     }
 
@@ -172,9 +183,14 @@ export const useCameraSearch = () => {
       // Lazy load TF.js and MobileNet in parallel with camera access
       const [, stream] = await Promise.all([
         (async () => {
-          if (modelRef.current) return null;
+          if (modelRef.current) {
+            setLoadingStage("ready");
+            return null;
+          }
+          setLoadingStage("tensorflow");
           const tf = await withTimeout(import("@tensorflow/tfjs"), 15000, "Chargement TensorFlow");
           await withTimeout(tf.ready(), 10000, "Initialisation TensorFlow");
+          setLoadingStage("model");
           const mn = await withTimeout(import("@tensorflow-models/mobilenet"), 10000, "Chargement MobileNet");
           const model = await withTimeout(
             mn.load({ version: 2, alpha: 0.5 }),
@@ -182,44 +198,50 @@ export const useCameraSearch = () => {
             "Telechargement du modele"
           );
           modelRef.current = model;
+          setLoadingStage("ready");
           return null;
         })(),
-        navigator.mediaDevices
-          .getUserMedia({
-            video: { facingMode: { ideal: "environment" }, width: { ideal: 640 }, height: { ideal: 480 } },
-            audio: false,
-          })
-          .catch((err: DOMException) => {
-            if (err.name === "NotAllowedError") {
+        (async () => {
+          setLoadingStage((prev) => prev === "init" ? "camera" : prev);
+          const stream = await navigator.mediaDevices
+            .getUserMedia({
+              video: { facingMode: { ideal: "environment" }, width: { ideal: 640 }, height: { ideal: 480 } },
+              audio: false,
+            })
+            .catch((err: DOMException) => {
+              if (err.name === "NotAllowedError") {
+                throw new Error(
+                  "Acces a la camera refuse. Autorisez l'acces dans les parametres."
+                );
+              }
+              if (err.name === "NotFoundError") {
+                throw new Error("Aucune camera detectee sur cet appareil.");
+              }
               throw new Error(
-                "Acces a la camera refuse. Autorisez l'acces dans les parametres."
+                "Impossible d'acceder a la camera. Verifiez vos permissions."
               );
-            }
-            if (err.name === "NotFoundError") {
-              throw new Error("Aucune camera detectee sur cet appareil.");
-            }
-            throw new Error(
-              "Impossible d'acceder a la camera. Verifiez vos permissions."
-            );
-          }),
+            });
+          return stream;
+        })(),
       ]);
 
       streamRef.current = stream as MediaStream;
+      toast.success("Camera activee", { style: TOAST_STYLE, icon: "📸" });
       // Stream will be assigned to video element via the useEffect when state becomes "viewfinder"
       setState("viewfinder");
     } catch (err: any) {
       stopStream();
       setState("error");
-      setError(
-        err?.message ||
-          "Impossible de charger le modele. Verifiez votre connexion."
-      );
+      const msg = err?.message || "Impossible de charger le modele. Verifiez votre connexion.";
+      setError(msg);
+      toast.error(msg, { style: TOAST_STYLE });
     }
   }, [stopStream]);
 
   const capture = useCallback(async () => {
     if (!videoRef.current || !canvasRef.current || !modelRef.current) return;
 
+    setAnalyzingStage("capturing");
     setState("capturing");
 
     const video = videoRef.current;
@@ -238,9 +260,11 @@ export const useCameraSearch = () => {
     stopStream();
 
     try {
+      setAnalyzingStage("detecting");
       const predictions: Classification[] =
         await modelRef.current.classify(canvas, 5);
 
+      setAnalyzingStage("classifying");
       const detected: DetectedCategory[] = [];
       const seenTerms = new Set<string>();
 
@@ -261,15 +285,24 @@ export const useCameraSearch = () => {
         setError(
           "Objet non reconnu. Essayez un autre angle ou meilleur eclairage."
         );
+        toast.error("Aucun objet reconnu", { style: TOAST_STYLE });
         return;
       }
 
+      toast.success(
+        `${detected.length} objet${detected.length > 1 ? "s" : ""} detecte${detected.length > 1 ? "s" : ""}`,
+        { style: TOAST_STYLE, icon: "✓" }
+      );
+
+      setAnalyzingStage("searching");
       setDetectedCategories(detected);
       setState("results");
       await searchProducts(detected[0].searchTerm);
     } catch {
       setState("error");
-      setError("Erreur lors de l'analyse de l'image. Reessayez.");
+      const msg = "Erreur lors de l'analyse de l'image. Reessayez.";
+      setError(msg);
+      toast.error(msg, { style: TOAST_STYLE });
     }
   }, [stopStream, searchProducts]);
 
@@ -279,6 +312,8 @@ export const useCameraSearch = () => {
     setActiveSearchTerm("");
     setCapturedImage("");
     setError("");
+    setLoadingStage("init");
+    setAnalyzingStage("capturing");
 
     setState("loading-model");
 
@@ -305,6 +340,8 @@ export const useCameraSearch = () => {
     setResults([]);
     setActiveSearchTerm("");
     setCapturedImage("");
+    setLoadingStage("init");
+    setAnalyzingStage("capturing");
   }, [stopStream]);
 
   // Assign stream to video element once it's rendered in viewfinder state
@@ -328,6 +365,8 @@ export const useCameraSearch = () => {
   return {
     state,
     error,
+    loadingStage,
+    analyzingStage,
     detectedCategories,
     activeSearchTerm,
     results,

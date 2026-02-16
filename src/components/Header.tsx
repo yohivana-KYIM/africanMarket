@@ -318,14 +318,33 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
           className={`w-full ${headerSolid ? "border-b border-[#e8e8e8]/60" : "border-b border-white/10"}`}
           style={{ WebkitBackdropFilter: "blur(12px)" }}
         >
-          <div className="max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-10">
-            <nav className="flex items-center justify-start lg:justify-center gap-0 overflow-x-auto scrollbar-hide">
+          <div className="max-w-[1440px] mx-auto px-0 sm:px-4 lg:px-10 relative">
+            {/* Left fade indicator (mobile/tablet) */}
+            <div
+              className={`absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none lg:hidden ${
+                headerSolid
+                  ? "bg-gradient-to-r from-[#faf9f7] to-transparent"
+                  : "bg-gradient-to-r from-black/20 to-transparent"
+              }`}
+            />
+            {/* Right fade indicator (mobile/tablet) */}
+            <div
+              className={`absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none lg:hidden ${
+                headerSolid
+                  ? "bg-gradient-to-l from-[#faf9f7] to-transparent"
+                  : "bg-gradient-to-l from-black/20 to-transparent"
+              }`}
+            />
+            <nav
+              className="flex items-center justify-start lg:justify-center gap-0 overflow-x-auto scrollbar-hide scroll-smooth px-3 sm:px-0"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
               {categoriesConfig.map((cat) => (
                 <button
                   key={cat.slug}
                   onClick={() => goToCategory(cat.slug)}
                   onMouseEnter={() => setActiveMenu(cat.slug)}
-                  className={`group relative text-[9px] sm:text-[10px] lg:text-[11px] font-medium tracking-[0.14em] sm:tracking-[0.18em] uppercase transition-colors duration-200 py-2.5 sm:py-3 px-2.5 sm:px-3 lg:px-4 whitespace-nowrap flex-shrink-0 hover:-translate-y-px ${
+                  className={`group relative text-[8px] sm:text-[10px] lg:text-[11px] font-medium tracking-[0.1em] sm:tracking-[0.18em] uppercase transition-colors duration-200 py-2 sm:py-3 px-2 sm:px-3 lg:px-4 whitespace-nowrap flex-shrink-0 hover:-translate-y-px ${
                     headerSolid
                       ? "text-[#19110b]/80 hover:text-[#19110b]"
                       : "text-white/80 hover:text-white"
@@ -336,7 +355,7 @@ const Header: FC<HeaderProps> = ({ cartCount, toggleCart, wishlistCount, toggleW
                   {cat.label}
                   {/* Underline */}
                   <span
-                    className={`absolute bottom-1.5 left-3 right-3 h-[2px] rounded-full origin-left bg-[#c5a467] transition-transform duration-200 ${
+                    className={`absolute bottom-1 sm:bottom-1.5 left-2 right-2 sm:left-3 sm:right-3 h-[2px] rounded-full origin-left bg-[#c5a467] transition-transform duration-200 ${
                       activeMenu === cat.slug ? "scale-x-100" : "scale-x-0"
                     }`}
                   />
