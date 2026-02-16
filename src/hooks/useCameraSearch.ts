@@ -197,13 +197,13 @@ export const useCameraSearch = () => {
             return null;
           }
           setLoadingStage("tensorflow");
-          const tf = await withTimeout(import("@tensorflow/tfjs"), 15000, "Chargement TensorFlow");
-          await withTimeout(tf.ready(), 10000, "Initialisation TensorFlow");
+          const tf = await withTimeout(import("@tensorflow/tfjs"), 30000, "Chargement TensorFlow");
+          await withTimeout(tf.ready(), 20000, "Initialisation TensorFlow");
           setLoadingStage("model");
-          const mn = await withTimeout(import("@tensorflow-models/mobilenet"), 10000, "Chargement MobileNet");
+          const mn = await withTimeout(import("@tensorflow-models/mobilenet"), 20000, "Chargement MobileNet");
           const model = await withTimeout(
             mn.load({ version: 2, alpha: 0.5 }),
-            20000,
+            60000,
             "Telechargement du modele"
           );
           modelRef.current = model;
@@ -248,7 +248,11 @@ export const useCameraSearch = () => {
   }, [stopStream]);
 
   const capture = useCallback(async () => {
-    if (!videoRef.current || !canvasRef.current || !modelRef.current) return;
+    if (!modelRef.current) {
+      toast.error("Le modele IA n'est pas charge. Fermez et reessayez.", { style: TOAST_STYLE });
+      return;
+    }
+    if (!videoRef.current || !canvasRef.current) return;
 
     setAnalyzingStage("capturing");
     setState("capturing");
@@ -324,6 +328,12 @@ export const useCameraSearch = () => {
     setLoadingStage("init");
     setAnalyzingStage("capturing");
 
+    // If model failed to load previously, do a full open() to reload everything
+    if (!modelRef.current) {
+      open();
+      return;
+    }
+
     setState("loading-model");
 
     try {
@@ -333,13 +343,12 @@ export const useCameraSearch = () => {
       });
 
       streamRef.current = stream;
-      // Stream will be assigned to video element via the useEffect when state becomes "viewfinder"
       setState("viewfinder");
     } catch {
       setState("error");
       setError("Impossible de reactiver la camera.");
     }
-  }, []);
+  }, [open]);
 
   const close = useCallback(() => {
     stopStream();
