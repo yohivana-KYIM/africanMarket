@@ -214,6 +214,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ isOpen, onClose }) => {
     searchLoading,
     capturedImage,
     videoRef,
+    connectVideoRef,
     canvasRef,
     open,
     capture,
@@ -381,7 +382,7 @@ const CameraSearch: FC<CameraSearchProps> = ({ isOpen, onClose }) => {
               >
                 <div className="relative w-full max-w-[480px] mx-auto aspect-[3/4] sm:aspect-[4/3]">
                   <video
-                    ref={videoRef}
+                    ref={connectVideoRef}
                     autoPlay
                     playsInline
                     muted

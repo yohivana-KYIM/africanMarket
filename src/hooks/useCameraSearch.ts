@@ -110,6 +110,15 @@ export const useCameraSearch = () => {
   const streamRef = useRef<MediaStream | null>(null);
   const modelRef = useRef<any>(null);
 
+  // Callback ref: fires when React mounts/unmounts the <video> element
+  const connectVideoRef = useCallback((el: HTMLVideoElement | null) => {
+    videoRef.current = el;
+    if (el && streamRef.current && !el.srcObject) {
+      el.srcObject = streamRef.current;
+      el.play().catch(() => {});
+    }
+  }, []);
+
   const stopStream = useCallback(() => {
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((t) => t.stop());
@@ -385,6 +394,7 @@ export const useCameraSearch = () => {
     searchLoading,
     capturedImage,
     videoRef,
+    connectVideoRef,
     canvasRef,
     open,
     capture,
