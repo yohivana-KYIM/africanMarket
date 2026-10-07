@@ -59,6 +59,8 @@ const HeroManager: FC = () => {
   const [busy, setBusy] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const bulkRef = useRef<HTMLInputElement>(null);
+  const [progress, setProgress] = useState<string | null>(null);
 
   const fail = (e: unknown, fallback: string) =>
     toast.error(e instanceof Error ? e.message : fallback, { style: toastStyle });
@@ -108,6 +110,37 @@ const HeroManager: FC = () => {
     if (!url) return;
     setForm((p) => ({ ...p, media: url, mediaType: isVideoUrl(url) ? "video" : "image" }));
     setMediaUrl("");
+  };
+
+  // Ajout en lot : chaque fichier devient un slide, dans l'ordre de sélection
+  const handleBulk = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    if (files.length === 0) return;
+    let added = 0;
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      setProgress(`Envoi ${i + 1}/${files.length}...`);
+      const isVideo = file.type.startsWith("video/");
+      if (!isVideo && !file.type.startsWith("image/")) {
+        toast.error(`"${file.name}" ignoré (ni image ni vidéo)`, { style: toastStyle });
+        continue;
+      }
+      if (file.size > (isVideo ? MAX_VIDEO_SIZE : MAX_FILE_SIZE)) {
+        toast.error(`"${file.name}" trop lourd (${isVideo ? "8" : "15"} Mo max)`, { style: toastStyle });
+        continue;
+      }
+      try {
+        const data = isVideo ? await readFileAsDataURL(file) : await compressImage(file, 1920, 0.8);
+        await addSlide({ ...emptySlide, media: data, mediaType: isVideo ? "video" : "image", title: "", subtitle: "", cta: "" });
+        added++;
+      } catch (err) {
+        fail(err, `Échec de l'envoi de "${file.name}"`);
+        break;
+      }
+    }
+    setProgress(null);
+    if (added > 0) toast.success(`${added} slide(s) ajouté(s) — touchez ✏️ pour ajouter titre et bouton`, { style: okStyle });
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -337,12 +370,22 @@ const HeroManager: FC = () => {
         <p className="text-[12px] text-[#757575] font-light">
           {slides.length} slide(s) · ils défilent sur l'accueil dans cet ordre.
         </p>
-        <button
-          onClick={openNew}
-          className="flex items-center justify-center gap-2 bg-[#19110b] text-white text-[11px] tracking-[0.15em] uppercase px-5 py-3 hover:bg-[#6b4c3b] transition-colors"
-        >
-          <HiOutlinePlus size={15} /> Ajouter un slide
-        </button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            onClick={() => bulkRef.current?.click()}
+            disabled={progress !== null}
+            className="flex items-center justify-center gap-2 border border-[#19110b] text-[#19110b] text-[11px] tracking-[0.15em] uppercase px-5 py-3 disabled:opacity-50 active:bg-[#19110b] active:text-white"
+          >
+            <HiOutlineFilm size={15} /> {progress ?? "Plusieurs images / vidéos"}
+          </button>
+          <button
+            onClick={openNew}
+            className="flex items-center justify-center gap-2 bg-[#19110b] text-white text-[11px] tracking-[0.15em] uppercase px-5 py-3 hover:bg-[#6b4c3b] transition-colors"
+          >
+            <HiOutlinePlus size={15} /> Ajouter un slide
+          </button>
+        </div>
+        <input ref={bulkRef} type="file" accept="image/*,video/*" multiple onChange={handleBulk} className="hidden" />
       </div>
 
       {!loading && (!fromServer || slides.length === 0) && (
@@ -358,6 +401,25 @@ const HeroManager: FC = () => {
               {busy ? "Import..." : "Importer les 6 slides d'origine"}
             </button>
           )}
+        </div>
+      )}
+
+      {!loading && slides.length === 0 && (
+        <div className="mb-5">
+          <p className="text-[10px] tracking-[0.15em] uppercase text-[#757575] font-medium mb-3">
+            Visuels actuellement affichés sur l'accueil
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {fallbackSlides.map((f, i) => (
+              <div key={f.id} className="bg-white border border-[#e8e8e8]">
+                <div className="relative aspect-[16/10] bg-[#19110b] overflow-hidden">
+                  <img src={f.media} alt={f.title} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                  <span className="absolute top-1 left-1 text-[8px] uppercase bg-[#19110b]/80 text-white px-1.5 py-0.5">{i + 1}</span>
+                </div>
+                <p className="text-[11px] text-[#19110b] p-2 truncate">{f.title}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
