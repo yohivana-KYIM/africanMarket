@@ -16,6 +16,13 @@ const getToken = (): string | null => {
   return null;
 };
 
+const apiError = async (res: Response, fallback: string): Promise<Error> => {
+  if (res.status === 401) return new Error("Session expirée, reconnectez-vous");
+  if (res.status === 413) return new Error("413 : images trop volumineuses");
+  const err = await res.json().catch(() => ({}));
+  return new Error(err.message || fallback);
+};
+
 const authHeaders = (): Record<string, string> => {
   const token = getToken();
   const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -107,7 +114,7 @@ export const useProducts = () => {
       headers: authHeaders(),
       body: JSON.stringify(product),
     });
-    if (!res.ok) throw new Error("Erreur lors de l'ajout");
+    if (!res.ok) throw await apiError(res, "Erreur lors de l'ajout");
     const created = await res.json();
     setProducts((prev) => [...prev, mapProduct(created)]);
   }, []);
@@ -118,10 +125,7 @@ export const useProducts = () => {
       headers: authHeaders(),
       body: JSON.stringify(updates),
     });
-    if (!res.ok) {
-      const err = await res.json().catch(() => ({}));
-      throw new Error(err.message || `Erreur ${res.status} lors de la mise à jour`);
-    }
+    if (!res.ok) throw await apiError(res, `Erreur ${res.status} lors de la mise à jour`);
     const updated = await res.json();
     setProducts((prev) =>
       prev.map((p) => (p.id === id ? mapProduct(updated) : p))
@@ -133,7 +137,7 @@ export const useProducts = () => {
       method: "DELETE",
       headers: authHeaders(),
     });
-    if (!res.ok) throw new Error("Erreur lors de la suppression");
+    if (!res.ok) throw await apiError(res, "Erreur lors de la suppression");
     setProducts((prev) => prev.filter((p) => p.id !== id));
   }, []);
 

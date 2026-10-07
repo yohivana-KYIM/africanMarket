@@ -21,8 +21,10 @@ import type { Product } from "../types";
 import { useProducts } from "../hooks/useProducts";
 import { formatPrice } from "../data/products";
 import { categoriesConfig } from "../data/categories";
+import HeroManager from "../components/HeroManager";
+import { compressImage } from "../utils/media";
 
-type Tab = "overview" | "products" | "add" | "edit";
+type Tab = "overview" | "products" | "add" | "edit" | "hero";
 
 const MAX_IMAGES = 8;
 
@@ -65,7 +67,7 @@ const Admin: FC = () => {
   const [customSize, setCustomSize] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+  const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB (compressée avant envoi)
 
   const totalProducts = products.length;
   const totalValue = products.reduce((s, p) => s + p.price, 0);
@@ -88,22 +90,23 @@ const Admin: FC = () => {
       return;
     }
 
-    files.slice(0, remaining).forEach((file) => {
+    files.slice(0, remaining).forEach(async (file) => {
       if (file.size > MAX_IMAGE_SIZE) {
         toast.error(
-          `"${file.name}" trop volumineuse (${(file.size / 1024 / 1024).toFixed(1)} MB). Max : 5 MB`,
+          `"${file.name}" trop volumineuse (${(file.size / 1024 / 1024).toFixed(1)} MB). Max : 10 MB`,
           { style: { borderRadius: "0", fontSize: "12px" } }
         );
         return;
       }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
+      try {
+        const dataUrl = await compressImage(file);
         setForm((prev) => ({
           ...prev,
-          images: prev.images.length < MAX_IMAGES ? [...prev.images, ev.target?.result as string] : prev.images,
+          images: prev.images.length < MAX_IMAGES ? [...prev.images, dataUrl] : prev.images,
         }));
-      };
-      reader.readAsDataURL(file);
+      } catch {
+        toast.error(`Impossible de lire "${file.name}"`, { style: { borderRadius: "0", fontSize: "12px" } });
+      }
     });
     e.target.value = "";
   };
@@ -168,7 +171,11 @@ const Admin: FC = () => {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!form.name || form.images.length === 0 || form.price <= 0) return;
+    if (form.images.length === 0) {
+      toast.error("Ajoutez au moins une photo", { style: { borderRadius: "0", fontSize: "12px" } });
+      return;
+    }
+    if (!form.name || form.price <= 0) return;
 
     const productData = {
       ...form,
@@ -230,7 +237,7 @@ const Admin: FC = () => {
       toast.success("Produit supprimé", { style: { background: "#19110b", color: "#fff", borderRadius: "0", fontSize: "12px" } });
     } catch (error) {
       console.error(error);
-      toast.error("Erreur lors de la suppression", { style: { borderRadius: "0", fontSize: "12px" } });
+      toast.error(error instanceof Error ? error.message : "Erreur lors de la suppression", { style: { borderRadius: "0", fontSize: "12px" } });
     }
     setDeleteConfirm(null);
   };
@@ -288,6 +295,7 @@ const Admin: FC = () => {
               { key: "overview", label: "Vue d'ensemble" },
               { key: "products", label: "Produits" },
               { key: "add", label: "Ajouter" },
+              { key: "hero", label: "Hero / Accueil" },
             ] as { key: Tab; label: string }[]).map((tab) => (
               <button
                 key={tab.key}
@@ -558,15 +566,15 @@ const Admin: FC = () => {
                       <p className="text-[10px] text-[#757575] mb-1">{product.subcategory}</p>
                       <p className="text-[12px] text-[#19110b] font-medium">{formatPrice(product.price)}</p>
                     </div>
-                    <div className="flex flex-col gap-1 shrink-0">
-                      <button onClick={() => setViewProduct(product)} className="p-2 text-[#757575] hover:text-[#c5a467]">
-                        <HiOutlineEye size={16} />
+                    <div className="flex flex-col gap-1.5 shrink-0">
+                      <button onClick={() => setViewProduct(product)} aria-label="Voir" className="w-10 h-10 flex items-center justify-center border border-[#e8e8e8] text-[#757575] active:bg-[#f0f0f0]">
+                        <HiOutlineEye size={18} />
                       </button>
-                      <button onClick={() => startEdit(product)} className="p-2 text-[#757575] hover:text-[#19110b]">
-                        <HiOutlinePencil size={16} />
+                      <button onClick={() => startEdit(product)} aria-label="Modifier" className="w-10 h-10 flex items-center justify-center border border-[#19110b] text-[#19110b] active:bg-[#f0f0f0]">
+                        <HiOutlinePencil size={18} />
                       </button>
-                      <button onClick={() => setDeleteConfirm(product.id)} className="p-2 text-[#757575] hover:text-red-600">
-                        <HiOutlineTrash size={16} />
+                      <button onClick={() => setDeleteConfirm(product.id)} aria-label="Supprimer" className="w-10 h-10 flex items-center justify-center border border-red-200 text-red-600 active:bg-red-50">
+                        <HiOutlineTrash size={18} />
                       </button>
                     </div>
                   </div>
@@ -579,6 +587,13 @@ const Admin: FC = () => {
                 </div>
               )}
             </div>
+          </motion.div>
+        )}
+
+        {/* HERO TAB */}
+        {activeTab === "hero" && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+            <HeroManager />
           </motion.div>
         )}
 
@@ -599,7 +614,7 @@ const Admin: FC = () => {
                     </p>
                     {form.images.length > 1 && (
                       <p className="text-[9px] text-[#757575] font-light">
-                        Cliquez pour definir comme principale
+                        Touchez « Principale » pour choisir la photo de couverture
                       </p>
                     )}
                   </div>
@@ -607,26 +622,40 @@ const Admin: FC = () => {
                   {/* Image Grid */}
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 mb-4">
                     {form.images.map((img, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setMainImage(index)}
-                        className={`relative aspect-[3/4] bg-[#f6f5f3] overflow-hidden cursor-pointer group ${
-                          index === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8] hover:ring-[#19110b]"
-                        }`}
-                      >
-                        <img src={img} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
-                        {index === 0 && (
-                          <span className="absolute top-1.5 left-1.5 text-[8px] tracking-[0.1em] uppercase bg-[#c5a467] text-white px-1.5 py-0.5">
+                      <div key={`${index}-${img.slice(-24)}`} className="flex flex-col gap-1">
+                        <div
+                          className={`relative aspect-[3/4] bg-[#f6f5f3] overflow-hidden ${
+                            index === 0 ? "ring-2 ring-[#c5a467]" : "ring-1 ring-[#e8e8e8]"
+                          }`}
+                        >
+                          <img src={img} alt={`Photo ${index + 1}`} className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                          {index === 0 && (
+                            <span className="absolute top-1.5 left-1.5 text-[8px] tracking-[0.1em] uppercase bg-[#c5a467] text-white px-1.5 py-0.5">
+                              Principale
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            aria-label={`Supprimer la photo ${index + 1}`}
+                            className="absolute top-1 right-1 w-8 h-8 bg-red-600 text-white shadow flex items-center justify-center active:bg-red-700"
+                          >
+                            <HiOutlineTrash size={16} />
+                          </button>
+                        </div>
+                        {index !== 0 ? (
+                          <button
+                            type="button"
+                            onClick={() => setMainImage(index)}
+                            className="text-[9px] tracking-[0.08em] uppercase text-[#19110b] border border-[#e8e8e8] py-1.5 active:bg-[#f0f0f0]"
+                          >
                             Principale
+                          </button>
+                        ) : (
+                          <span className="text-[9px] tracking-[0.08em] uppercase text-[#c5a467] text-center py-1.5">
+                            ★ Principale
                           </span>
                         )}
-                        <button
-                          type="button"
-                          onClick={(e) => { e.stopPropagation(); removeImage(index); }}
-                          className="absolute top-1.5 right-1.5 w-5 h-5 bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                        >
-                          <HiOutlineX size={10} />
-                        </button>
                       </div>
                     ))}
                     {form.images.length < MAX_IMAGES && (
@@ -640,6 +669,16 @@ const Admin: FC = () => {
                       </button>
                     )}
                   </div>
+
+                  {form.images.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setForm((prev) => ({ ...prev, images: [] }))}
+                      className="mb-4 text-[10px] tracking-[0.1em] uppercase text-red-600 underline underline-offset-4"
+                    >
+                      Supprimer toutes les photos
+                    </button>
+                  )}
 
                   <input
                     ref={fileInputRef}
@@ -1098,6 +1137,12 @@ const Admin: FC = () => {
                   className="flex-1 bg-[#19110b] text-white text-[10px] tracking-[0.15em] uppercase py-3 flex items-center justify-center gap-2 hover:bg-[#2a1f14] transition-colors"
                 >
                   <HiOutlinePencil size={14} /> Modifier
+                </button>
+                <button
+                  onClick={() => { setDeleteConfirm(viewProduct.id); setViewProduct(null); }}
+                  className="px-4 border border-red-200 text-red-600 text-[10px] tracking-[0.15em] uppercase py-3 flex items-center justify-center gap-2 hover:bg-red-50 transition-colors"
+                >
+                  <HiOutlineTrash size={14} /> Supprimer
                 </button>
                 <button
                   onClick={() => navigate(`/product/${viewProduct.id}`)}

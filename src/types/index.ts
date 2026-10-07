@@ -76,3 +76,20 @@ export interface ProductFilters {
   featured?: boolean;
   sort?: string;
 }
+export type SlideTransition = "fade" | "slide" | "zoom" | "none";
+
+export interface Slide {
+  id: string;
+  mediaType: "image" | "video";
+  media: string;
+  poster: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  cta: string;
+  link: string;
+  duration: number;
+  transition: SlideTransition;
+  order: number;
+  active: boolean;
+}
