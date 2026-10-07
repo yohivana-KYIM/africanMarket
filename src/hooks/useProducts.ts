@@ -17,10 +17,12 @@ const getToken = (): string | null => {
 };
 
 const apiError = async (res: Response, fallback: string): Promise<Error> => {
-  if (res.status === 401) return new Error("Session expirée, reconnectez-vous");
-  if (res.status === 413) return new Error("413 : images trop volumineuses");
   const err = await res.json().catch(() => ({}));
-  return new Error(err.message || fallback);
+  if (res.status === 401) return new Error("Session expirée, reconnectez-vous puis réessayez");
+  if (err.message) return new Error(err.message);
+  if (res.status === 413) return new Error("Fichiers trop volumineux pour le serveur");
+  if (res.status >= 500) return new Error("Le serveur est indisponible, réessayez dans un instant");
+  return new Error(`${fallback} (code ${res.status})`);
 };
 
 const authHeaders = (): Record<string, string> => {

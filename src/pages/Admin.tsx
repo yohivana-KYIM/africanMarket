@@ -202,10 +202,11 @@ const Admin: FC = () => {
     } catch (error) {
       console.error(error);
       const errMsg = error instanceof Error ? error.message : "";
-      const msg = errMsg.includes("413")
-        ? "Images trop volumineuses pour le serveur. Réduisez la taille."
-        : errMsg || "Erreur lors de l'opération";
-      toast.error(msg, { style: { borderRadius: "0", fontSize: "12px" } });
+      const msg =
+        error instanceof TypeError
+          ? "Connexion au serveur impossible. Vérifiez votre réseau et réessayez (le serveur peut mettre ~30 s à se réveiller)."
+          : errMsg || "Erreur lors de l'opération";
+      toast.error(msg, { duration: 7000, style: { borderRadius: "0", fontSize: "12px" } });
     } finally {
       setSubmitting(false);
     }
